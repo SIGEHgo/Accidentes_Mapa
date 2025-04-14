@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa de Accidentes</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    #map { width: 100vw; height: 100vh; margin: 0; padding: 0; }
+    .mi-popup h3 { margin: 0 0 5px; font-size: 1.1em; }
+    .mi-popup p { margin: 2px 0; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="Extras/leaflet-heat.js"></script>
+  <script src="Extras/heat-data.js"></script>
+
+  <script>
+
+    const map = L.map('map').setView([20, -98], 9);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Heatmap siempre visible
+    const heatLayer = L.heatLayer(heatPoints, {
+    radius: 40,
+    blur: 15,
+    maxZoom: 1
+    }).addTo(map);
+
+    function formatearFechaHora({ DIA, MES, ANIO, HORA, MINUTOS }) {
+      const pad = v => String(v).padStart(2,'0');
+      return {
+        fecha: `${pad(DIA)}/${pad(MES)}/${ANIO}`,
+        hora:  `${pad(HORA)}:${pad(MINUTOS)}`
+      };
+    }
+
+    // Preparamos la capa de círculos (sin añadirla aún)
+    let markersLayer = L.layerGroup();
+
+    fetch('Datos/2021_filtrado/2021_n.geojson')
+      .then(res => res.json())
+      .then(data => {
+        markersLayer = L.geoJSON(data, {
+          style: () => ({ color: '#FF5733', weight: 2 }),
+          pointToLayer: (feature, latlng) =>
+            L.circleMarker(latlng, {
+              radius: 10,
+              fillColor: '#0074D9',
+              color: '#fff',
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.8
+            }),
+          onEachFeature: (feature, layer) => {
+            const p = feature.properties;
+            const { fecha, hora } = formatearFechaHora(p);
+            const html = `
+              <div class="mi-popup">
+                <h3>${p.TIPACCID} – ${p.CLASE}</h3>
+                <p><strong>Fecha:</strong> ${fecha} a las ${hora} hrs</p>
+                <p><strong>Ubicación:</strong> ${p.NOM_MUN}, ${p.EDO}</p>
+                <p><strong>Posible causa:</strong> ${p.CAUSAACCI}</p>
+                <p><strong>Responsable:</strong> ${p.SEXO} de ${p.EDAD} años</p>
+              </div>
+            `;
+            layer.bindPopup(html);
+          }
+        });
+        // Cargar la funcion, que inicialmente checa el zoom
+        quitar_anadir_circulos();
+      })
+      .catch(err => console.error('Error al cargar GeoJSON:', err));
+
+    // Función respecto al zoom
+    function quitar_anadir_circulos() {
+        const z = map.getZoom();
+        if (z >= 17) {
+        if (!map.hasLayer(markersLayer)) {
+            map.addLayer(markersLayer);
+        }
+        if (map.hasLayer(heatLayer)) {
+            map.removeLayer(heatLayer);
+        }
+        } else {
+        if (map.hasLayer(markersLayer)) {
+            map.removeLayer(markersLayer);
+        }
+        if (!map.hasLayer(heatLayer)) {
+            map.addLayer(heatLayer);
+        }
+        }
+  }
+
+    // Escuchamos el evento zoomend usando el nuevo nombre
+    map.on('zoomend', quitar_anadir_circulos);
+  </script>
+</body>
+</html>

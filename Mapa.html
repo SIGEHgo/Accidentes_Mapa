@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa de Accidentes</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { width: 100vw; height: 100vh; margin: 0; padding: 0; }
+    .mi-popup h3 { margin: 0 0 5px; font-size: 1.1em; }
+    .mi-popup p { margin: 2px 0; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="Extras/leaflet-heat.js"></script>
+  <script src="Extras/heat-data-2021.js"></script>
+  <script src="Extras/heat-data-2022.js"></script>
+  <script src="Extras/heat-data-2023.js"></script>
+  <script src="Datos/Filtrados/2021/2021 copy.js"></script>
+  <script src="Datos/Filtrados/2022/2022 copy.js"></script>
+  <script src="Datos/Filtrados/2023/2023 copy.js"></script>
+
+  <script>
+
+    var map = L.map('map').setView([20, -98], 9);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+
+    function formatearFechaHora({ DIA, MES, ANIO, HORA, MINUTOS }) {
+      const pad = v => String(v).padStart(2,'0');
+      return {
+        fecha: `${pad(DIA)}/${pad(MES)}/${ANIO}`,
+        hora:  `${pad(HORA)}:${pad(MINUTOS)}`
+      };
+    }
+
+    style_default=function() {
+      return { color: '#FF5733', weight: 2 };
+    }
+
+    pointToLayer_default=function(feature, latlng) {
+      return L.circleMarker(latlng, {
+        radius: 10,
+        fillColor: '#0074D9',
+        color: '#fff',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      });
+    }
+
+    onEachFeature_default = function(feature, layer) {
+      const p = feature.properties;
+      const { fecha, hora } = formatearFechaHora(p);
+      let responsable;
+      
+      if (p.SEXO == 1) {
+        responsable = `${p.SEXO}`;
+      } else if (p.EDAD == 0 || p.EDAD == 99) {
+        responsable = `${p.SEXO}`;
+      } else {
+        responsable = `${p.SEXO} de ${p.EDAD} años`;
+      }
+      
+      const html = `
+        <div class="mi-popup">
+          <h3>${p.TIPACCID} – ${p.CLASE}</h3>
+          <p><strong>Fecha:</strong> ${fecha} a las ${hora} hrs</p>
+          <p><strong>Ubicación:</strong> ${p.NOM_MUN}, ${p.EDO}</p>
+          <p><strong>Posible causa:</strong> ${p.CAUSAACCI}</p>
+          <p><strong>Responsable:</strong> ${responsable}</p>
+        </div>
+      `;
+      
+      layer.bindPopup(html);
+    }
+
+
+
+
+
+    // Los heatmaps 
+    const heatLayer2021 = L.heatLayer(heatPoints_2021, { radius: 10, blur: 15, maxZoom: 1 });
+    const heatLayer2022 = L.heatLayer(heatPoints_2022, { radius: 10, blur: 15, maxZoom: 1 });
+    const heatLayer2023 = L.heatLayer(heatPoints_2023, { radius: 10, blur: 15, maxZoom: 1 });
+
+    // Crea GeoJSON
+    const markersLayer2021 = L.geoJSON(gjson2021, {
+      style: style_default,
+      pointToLayer: pointToLayer_default,
+      onEachFeature: onEachFeature_default
+    });
+    const markersLayer2022 = L.geoJSON(gjson2022, {
+      style: style_default,
+      pointToLayer: pointToLayer_default,
+      onEachFeature: onEachFeature_default
+    });
+    const markersLayer2023 = L.geoJSON(gjson2023, {
+      style: style_default,
+      pointToLayer: pointToLayer_default,
+      onEachFeature: onEachFeature_default
+    });
+    
+
+    // LayerGroup
+    const capa2021 = L.layerGroup([  markersLayer2021,heatLayer2021 ],);
+    const capa2022 = L.layerGroup([ heatLayer2022, markersLayer2022 ]);
+    const capa2023 = L.layerGroup([ heatLayer2023, markersLayer2023 ]);
+
+    // Añadir capas al mapa por defecto
+    capa2023.addTo(map);
+
+    // Control de capas
+    const baseMaps = {
+      "Accidentes 2021": capa2021,
+      "Accidentes 2022": capa2022,
+      "Accidentes 2023": capa2023
+    };
+    L.control.layers(baseMaps, {}).addTo(map);
+
+
+
+    // Cargar la funcion, que inicialmente checa el zoom
+    quitar_anadir_circulos();
+
+
+      
+    // Función respecto al zoom
+    function quitar_anadir_circulos() {
+      const z = map.getZoom();
+      let markers, heat;
+      
+      // Determinar la capa activa según qué grupo esté actualmente en el mapa
+      if (map.hasLayer(capa2021)) {
+        markers = markersLayer2021;
+        heat    = heatLayer2021;
+      } else if (map.hasLayer(capa2022)) {
+        markers = markersLayer2022;
+        heat    = heatLayer2022;
+      } else if (map.hasLayer(capa2023)) {
+        markers = markersLayer2023;
+        heat    = heatLayer2023;
+      }
+
+      if (z >= 17) {
+        // Bastante zoom se muestran los circulos y se quita el heatmap
+        if (!map.hasLayer(markers)) {
+          map.addLayer(markers);
+        }
+        if (map.hasLayer(heat)) {
+          map.removeLayer(heat);
+        }
+      } else {
+        // Casi sin zoom se muestra el heatmap y se quitan los circulos
+        if (map.hasLayer(markers)) {
+          map.removeLayer(markers);
+        }
+        if (!map.hasLayer(heat)) {
+          map.addLayer(heat);
+        }
+      }
+}
+
+
+// Para corregir lo de la posicion de los circulos, se añade un evento a cada uno de los botones de la leyenda
+
+document.getElementsByClassName("leaflet-control-layers-selector")[0].addEventListener("click", function() {
+  console.log("click en el primero")
+  quitar_anadir_circulos()
+})
+
+document.getElementsByClassName("leaflet-control-layers-selector")[1].addEventListener("click", function() {
+  console.log("click en el primero")
+  quitar_anadir_circulos()
+})
+
+document.getElementsByClassName("leaflet-control-layers-selector")[2].addEventListener("click", function() {
+  console.log("click en el primero")
+  quitar_anadir_circulos()
+})
+
+
+
+    // Escuchamos el evento zoomend usando el nuevo nombre
+    map.on('zoomend', quitar_anadir_circulos);
+  </script>
+</body>
+</html>
