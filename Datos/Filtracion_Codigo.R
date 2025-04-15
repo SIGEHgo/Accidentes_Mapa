@@ -1,5 +1,7 @@
 setwd("C:/Users/SIGEH/Desktop/Lalo/Gob/Proyectos")
 
+
+
 datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2021_shp/ATUS_2021/conjunto_de_datos/BASE MUNICIPAL_ACCIDENTES DE TRANSITO GEORREFERENCIADOS_2021.shp")
 datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI) |> dplyr::filter(EDO == 13)
 
@@ -100,7 +102,7 @@ sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2022/2022.geojson", driver 
 
 
 ### 2023
-
+setwd("C:/Users/SIGEH/Desktop/Lalo/Gob/Proyectos")
 datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2023_shp/conjunto_de_datos/BASE MUNICIPAL_ACCIDENTES DE TRANSITO GEORREFERENCIADOS_2023.shp")
 datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI) |> dplyr::filter(EDO == 13)
 
