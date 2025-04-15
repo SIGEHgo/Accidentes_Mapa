@@ -136,7 +136,16 @@
           vehiculos[tipo] = cantidad;
         }
       }
-
+      const saldoHtml = `
+      <a href="#" class="notification">
+        <img src=""imagenes/Muerto.png" alt="Muertos" style="vertical-align: middle;width: 100%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px;">
+        <span class="badge" style=''>${p.TOT_MUERT}</span>
+      </a>
+      <a href="#" class="notification">
+        <img src=""imagenes/Herido.png" alt="Heridos" style="vertical-align: middle;width: 100%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px;">
+        <span class="badge" style=''>${p.TOT_HER}</span>
+      </a>
+      `;
       const vehiculosHtml = Object.entries(vehiculos)
         .map(([tipo, cantidad]) => `
           <a href="#" class="notification">
@@ -145,7 +154,15 @@
           </a>
         `)
         .join('');
-
+      const texto2025=p.TOT_MUERT? 
+      `
+        <h3 style="margin-top: 0.5vh;margin-bottom: 0vh;">Personas involucradas</h3>
+          ${saldoHtml}
+      `
+      : `
+        <h3 style="margin-top: 0.5vh;margin-bottom: 0vh;">Vehículos involucrados</h3>
+          ${vehiculosHtml}
+      `;
       const generoHtml = `
         <a href="#" class="">
           <img src="${p.SEXO === 'Hombre' ? 'imagenes/hombre_2.png' : (p.SEXO === 'Mujer' ? 'imagenes/mujer_2.png' : 'imagenes/desconocido.png')}" alt="Gender" style="width: 50%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px; background-color: transparent;">
@@ -155,11 +172,10 @@
       const html = `
         <div class="card" style="margin-top: 24px;">
           <div style="border-radius: 8px 8px 0px 0px;height: 3vh;padding: 0px;margin: -4px -16px; background-color: #000000;"></div>
-          <h3 style="margin-top: 0.5vh;margin-bottom: 0vh;">Vehículos involucrados</h3>
-          ${vehiculosHtml}
+          
             <div class="info" style="display: flex; justify-content: space-between; text-align: left;">
               <div style="width: 50%;">
-              <span><strong>${p.TIPACCID} 
+              <span><strong>${p.TIPACCID}
               </strong> </span>
               <span style="padding-top: 10px;">15/02/2021 ----- 14:49</span>
               <span style="padding-top: 10px;">${p.NOM_MUN}, Hidalgo</span>
