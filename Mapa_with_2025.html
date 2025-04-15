@@ -127,15 +127,29 @@
     onEachFeature_default = function(feature, layer) {
       const p = feature.properties;
       const { fecha, hora } = formatearFechaHora(p);
-      let responsable;
-      
-      if (p.SEXO == 1) {
-        responsable = `${p.SEXO}`;
-      } else if (p.EDAD == 0 || p.EDAD == 99) {
-        responsable = `${p.SEXO}`;
-      } else {
-        responsable = `${p.SEXO} de ${p.EDAD} años`;
-      }
+      const edad = p.EDAD?.toString();
+    const edadInvalida = ["0", "99", "Se ignora edad", "Se fugó"];
+
+        let responsable;
+        if (edadInvalida.includes(edad)) {
+            responsable = `${p.SEXO}`;
+        } else {
+            responsable = `${p.SEXO} de ${edad} años`;
+        }
+
+      let fecha_actualizacion;
+        if (!hora || hora === "null:null") {
+            fecha_actualizacion = `${fecha}`;
+        } else if (p.MINUTOS == null) {
+            fecha_actualizacion = `${fecha} a las ${p.HORA} hrs`;
+        } else if (p.HORA == null) {
+            fecha_actualizacion = `${fecha}`;
+        } else {
+            fecha_actualizacion = `${fecha} a las ${hora} hrs`;
+        }
+
+
+
       //Necesitamos una lista de los tipos de vehiculos invlucrados
       let vehiculos = {};
       let partes;
@@ -188,15 +202,14 @@
           ${texto_final}
             <div class="info" style="display: flex; justify-content: space-between; text-align: left;">
               <div style="width: 50%;">
-              <span><strong>${p.TIPACCID}
-              </strong> </span>
-              <span style="padding-top: 10px;">15/02/2021 ----- 14:49</span>
+              <span><strong>${p.TIPACCID} – ${p.CLASE} </strong> </span>
+              <span style="padding-top: 10px;"> ${fecha_actualizacion}</span>
               <span style="padding-top: 10px;">${p.NOM_MUN}, Hidalgo</span>
               </div>
               <div style="width: 40%; text-align: center;">
                   ${generoHtml}
-                <span>Causa accidente Conductor blablabla
-                </span>
+                <span> <strong>Posible causa:</strong> ${p.CAUSAACCI} </span>
+                <span Responsable:</strong> ${responsable} </span>
               </div>
             </div>
         </div>
