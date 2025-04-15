@@ -1,7 +1,5 @@
 setwd("C:/Users/SIGEH/Desktop/Lalo/Gob/Proyectos")
 
-
-
 datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2021_shp/ATUS_2021/conjunto_de_datos/BASE MUNICIPAL_ACCIDENTES DE TRANSITO GEORREFERENCIADOS_2021.shp")
 datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI) |> dplyr::filter(EDO == 13)
 
@@ -120,33 +118,9 @@ datos = merge(x = datos |> dplyr::mutate(MPIO = as.numeric(MPIO)) , y = mun |> d
 datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, NOM_MUN, SEXO, EDAD, CAUSAACCI) |>
   dplyr::arrange(ANIO, MES, DIA, HORA, MINUTOS)
 
+datos = datos[- 2076, ]
+
 sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2023/2023.geojson", driver = "GeoJSON")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ##############
@@ -171,3 +145,56 @@ datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2023_shp/conjunto_de_dato
 datos = datos |> dplyr::filter(EDO == 13) |> dplyr::select(LATITUD, LONGITUD) |> sf::st_drop_geometry()
 datos$interes = paste0("[", datos$LATITUD, ",", datos$LONGITUD, "]")
 write.csv(datos, "Accidentes_Mapa/Datos/Filtrados/2023/2023_puntos.csv", fileEncoding = "UTF-8", row.names = F)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##########
+### C5 ###
+##########
+
+
+## Filtracion
+datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2025_C5/siniestros_bien.shp")
+datos$EDO = "Hidalgo"
+datos = datos |> dplyr::select(TIPACCI, CLASACC, AÑO, MES, DIA, ID_HORA, ID_MINU, EDO, ID_MUNI, SEXO, ID_EDAD, CAUSAAC) |>
+  dplyr::arrange(AÑO, MES, DIA, ID_HORA, ID_MINU)
+
+colnames(datos) = c("TIPACCID", "CLASE", "ANIO", "MES", "DIA", "HORA", "MINUTOS", "EDO", "NOM_MUN", "SEXO", "EDAD", "CAUSAACCI", "geometry")
+sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2025_C5/2025.geojson", driver = "GeoJSON")
+sf::write_sf(datos, "Accidentes_Mapa/Datos/Filtrados/2025_C5/2025.shp")
+
+
+## Puntos
+datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2025_C5/siniestros_bien.shp")
+datos = datos |> dplyr::select(Y,X) |> sf::st_drop_geometry()
+datos$interes = paste0("[", datos$Y, ",", datos$X, "]")
+write.csv(datos, "Accidentes_Mapa/Datos/Filtrados/2025_C5/2025_puntos.csv", fileEncoding = "UTF-8", row.names = F)
+
+
+
+
+
+
+p = sf::read_sf("Accidentes_Mapa/Datos/Filtrados/2025_C5/2025.shp")
