@@ -14,6 +14,53 @@
     #map { width: 100vw; height: 100vh; margin: 0; padding: 0; }
     .mi-popup h3 { margin: 0 0 5px; font-size: 1.1em; }
     .mi-popup p { margin: 2px 0; font-size: 0.9em; }
+    .card {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 4px 16px;
+        width: 300px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        display: table-cell;
+    }
+    .icon {
+        font-size: 48px;
+        color: #007BFF;
+    }
+    .info {
+        margin-top: 12px;
+        font-size: 16px;
+        color: #333;
+    }
+    .info span {
+        display: block;
+        margin: 4px 0;
+    }
+    .notification {
+    background-color: #555;
+    color: white;
+    text-decoration: none;
+    padding: 0px 0px;
+    position: relative;
+    display: inline-block;
+    border-radius: 8px;
+    align-content: center;
+    }
+
+    .notification:hover {
+    background: #464646;
+    }
+
+    .notification .badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    padding: 5px 10px;
+    border-radius: 50%;
+    background-color: rgb(105, 3, 3);
+    color: white;
+    }
   </style>
 </head>
 <body>
@@ -34,7 +81,7 @@
 
   <script>
 
-    var map = L.map('map').setView([20, -98], 9);
+    var map = L.map('map').setView([20, -98], 12);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution:
@@ -77,14 +124,52 @@
       } else {
         responsable = `${p.SEXO} de ${p.EDAD} años`;
       }
+      //Necesitamos una lista de los tipos de vehiculos invlucrados
+      let vehiculos = {};
+      let partes;
+      let cantidad;
+      if (p.vehi_invol) {
+        partes = p.vehi_invol.trim().split(/\s+/);
+        for (let i = 0; i < partes.length; i += 2) {
+          cantidad = parseInt(partes[i], 10);
+          const tipo = partes[i + 1];
+          vehiculos[tipo] = cantidad;
+        }
+      }
+
+      const vehiculosHtml = Object.entries(vehiculos)
+        .map(([tipo, cantidad]) => `
+          <a href="#" class="notification">
+        <img src="imagenes/${tipo}.png" alt="${tipo}" style="vertical-align: middle;width: 100%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px;">
+        <span class="badge" style=''>${cantidad}</span>
+          </a>
+        `)
+        .join('');
+
+      const generoHtml = `
+        <a href="#" class="">
+          <img src="${p.SEXO === 'Hombre' ? 'imagenes/hombre_2.png' : (p.SEXO === 'Mujer' ? 'imagenes/mujer_2.png' : 'imagenes/desconocido.png')}" alt="Gender" style="width: 50%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px; background-color: transparent;">
+        </a>
+      `;
       
       const html = `
-        <div class="mi-popup">
-          <h3>${p.TIPACCID} – ${p.CLASE}</h3>
-          <p><strong>Fecha:</strong> ${fecha} a las ${hora} hrs</p>
-          <p><strong>Ubicación:</strong> ${p.NOM_MUN}, ${p.EDO}</p>
-          <p><strong>Posible causa:</strong> ${p.CAUSAACCI}</p>
-          <p><strong>Responsable:</strong> ${responsable}</p>
+        <div class="card" style="margin-top: 24px;">
+          <div style="border-radius: 8px 8px 0px 0px;height: 3vh;padding: 0px;margin: -4px -16px; background-color: #000000;"></div>
+          <h3 style="margin-top: 0.5vh;margin-bottom: 0vh;">Vehículos involucrados</h3>
+          ${vehiculosHtml}
+            <div class="info" style="display: flex; justify-content: space-between; text-align: left;">
+              <div style="width: 50%;">
+              <span><strong>${p.TIPACCID}
+              </strong> </span>
+              <span style="padding-top: 10px;">15/02/2021 ----- 14:49</span>
+              <span style="padding-top: 10px;">${p.NOM_MUN}, Hidalgo</span>
+              </div>
+              <div style="width: 40%; text-align: center;">
+                  ${generoHtml}
+                <span>Causa accidente Conductor blablabla
+                </span>
+              </div>
+            </div>
         </div>
       `;
       
