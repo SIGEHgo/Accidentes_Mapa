@@ -4,7 +4,15 @@ var map = L.map('map').setView([20, -98], 9);
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
-
+L.geoJSON(hidalgo, {
+  style: {
+      color: 'gray',
+      opacity: 0.5,
+      weight: 1,
+      fillColor: 'gray',
+      fillOpacity: 0.1
+  }
+}).addTo(map);
 let anio = 0;
 
     // Definir funciones que se usaran como predeterminadas despues
@@ -233,6 +241,7 @@ let anio = 0;
           map.addLayer(heat);
         }
       }
+      
     }
     quitar_anadir_circulos();
 
@@ -248,28 +257,79 @@ let anio = 0;
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[0].addEventListener("click", function() {
       console.log(this.children[0].children[1].innerHTML);
       quitar_anadir_circulos();
-      bounds = markersLayer2021.getBounds();
-      map.fitBounds(bounds);
+
 
 
       // Actualizador de graficas
       anio = parseInt(this.children[0].children[1].innerHTML, 10)
       console.log(anio);
 
-      chart_accidentes_por_mes.data.datasets[0].data = frecuencias_accidentes_mes[anio];
+      
+    });
+    function actualizarGraficasBasadoEnFeaturesVisibles(){
+      const bounds = map.getBounds();
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      const histogram_horas = Array(24).fill(0);
+      const frecuencias_accidentes_mes = Array(12).fill(0);
+      const frecuencias_dia_semana = Array(7).fill(0);
+      const frecuencias_grupo_edad = Array(4).fill(0);
+
+      gjson2021.features.forEach(feature => {
+          const coords = feature.geometry.coordinates;
+          const latlng = L.latLng(coords[1], coords[0]);
+
+          // Check if the feature is within the current bounds
+          if (bounds.contains(latlng)) {
+              const hora = feature.properties.HORA;
+              const mes = feature.properties.MES;
+              const dia = feature.properties.DIA-1;
+              const edad = feature.properties.EDAD;
+              if (typeof hora === 'number' && hora >= 0 && hora < 24) {
+                histogram_horas[hora]++; 
+              }
+              if (typeof mes === 'number' && mes >= 0 && mes < 12) {
+                frecuencias_accidentes_mes[mes]++; 
+              }
+              if (typeof dia === 'number' && dia >= 0 && dia < 7) {
+                frecuencias_dia_semana[dia]++; 
+              }
+              if (typeof edad === 'number' && edad >= 15 && edad <= 29) {
+                frecuencias_grupo_edad[0]++; 
+              }else{
+                if(typeof edad === 'number' && edad >= 30 && edad <= 59) {
+                  frecuencias_grupo_edad[1]++;
+                }else{
+                  if(typeof edad === 'number' && edad >= 60 && edad <= 98) {
+                    frecuencias_grupo_edad[2]++;
+                  }
+                  else{
+                    frecuencias_grupo_edad[3]++;
+                  }
+                }
+              }
+          }
+
+      });
+
+      console.log(histogram_horas)
+      console.log(frecuencias_accidentes_mes)
+      console.log(frecuencias_dia_semana)
+      console.log(frecuencias_grupo_edad)
+      chart_accidentes_por_mes.data.datasets[0].data = frecuencias_accidentes_mes;
       chart_accidentes_por_mes.options.plugins.title.text = `Número de accidentes por mes (${anio})`;
       chart_accidentes_por_mes.update();
       
 
-      chart_dia_semana.data.datasets[0].data = frecuencias_dia_semana[anio];
+      chart_dia_semana.data.datasets[0].data = frecuencias_dia_semana;
       chart_dia_semana.options.plugins.title.text = `Incidencia de accidentes por día de la semana (${anio})`;
       chart_dia_semana.update();
 
-      chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad[anio];
+      chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad;
       chart_grupo_edad.options.plugins.title.text = `Distribución de accidentes por grupos de edad (${anio})`;
       chart_grupo_edad.update();
-    });
-
+    }
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[1].addEventListener("click", function() {
       console.log(this.children[0].children[1].innerHTML);
       quitar_anadir_circulos();
@@ -348,3 +408,4 @@ let anio = 0;
 
     // Actualizar cuando el zoom termine.
     map.on('zoomend', quitar_anadir_circulos);
+    map.on('zoomend dragend', actualizarGraficasBasadoEnFeaturesVisibles);
