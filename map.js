@@ -196,6 +196,7 @@ let anio = 0;
       "2023": capa2023,
       "2025": capa2025
     };
+
     
     L.control.layers(baseMaps, {}, { collapsed: false }).addTo(map);
     // Función para cambiar entre heatmap y marcadores según el zoom.

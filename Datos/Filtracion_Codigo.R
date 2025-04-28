@@ -1,7 +1,7 @@
 setwd("C:/Users/SIGEH/Desktop/Lalo/Gob/Proyectos")
 
 datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2021_shp/ATUS_2021/conjunto_de_datos/BASE MUNICIPAL_ACCIDENTES DE TRANSITO GEORREFERENCIADOS_2021.shp")
-datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI) |> dplyr::filter(EDO == 13)
+datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI, DIASEMANA) |> dplyr::filter(EDO == 13)
 
 tipaccid_correcion = function(str) {
   return(switch(as.character(str),
@@ -53,6 +53,18 @@ causaacci_correcion = function(str) {
                 str  # valor por defecto si no hay coincidencia
   ))
 }
+dia_semanal = function(str) {
+  return(switch(as.character(str),
+                "1" = "Lunes",
+                "2" = "Martes",
+                "3" = "Miércoles",
+                "4" = "Jueves",
+                "5" = "Viernes",
+                "6" = "Sábado",
+                "7" = "Domingo",
+                str  # valor por defecto si no hay coincidencia
+  ))
+}
 
 
 datos$TIPACCID = sapply(datos$TIPACCID, tipaccid_correcion, simplify = T, USE.NAMES = F)
@@ -60,13 +72,14 @@ datos$CLASE = sapply(datos$CLASE, clase_correcion, simplify = T, USE.NAMES = F)
 datos$EDO = sapply(datos$EDO, edo_correcion, simplify = T, USE.NAMES = F)
 datos$SEXO = sapply(datos$SEXO, sexo_correcion, simplify = T, USE.NAMES = F)
 datos$CAUSAACCI = sapply(datos$CAUSAACCI, causaacci_correcion, simplify = T, USE.NAMES = F)
+datos$DIASEMANA = sapply(datos$DIASEMANA, dia_semanal, simplify = T, USE.NAMES = F)
 
 mun = sf::read_sf("../Importantes_documentos_usar/Municipios/municipiosjair.shp")
 mun = mun |> dplyr::select(CVE_MUN, NOM_MUN) |> sf::st_drop_geometry()
 
 datos = merge(x = datos |> dplyr::mutate(MPIO = as.numeric(MPIO)) , y = mun |> dplyr::mutate(CVE_MUN = as.numeric(CVE_MUN)), by.x = "MPIO", by.y = "CVE_MUN")
 
-datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, NOM_MUN, SEXO, EDAD, CAUSAACCI) |>
+datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, NOM_MUN, SEXO, EDAD, CAUSAACCI, DIASEMANA) |>
   dplyr::arrange(ANIO, MES, DIA, HORA, MINUTOS)
 
 sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2021/2021.geojson", driver = "GeoJSON")
@@ -80,20 +93,21 @@ sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2021/2021.geojson", driver 
 ### 2022
 
 datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2022_shp/conjunto_de_datos/BASE MUNICIPAL_ACCIDENTES DE TRANSITO GEORREFERENCIADOS_2022.shp")
-datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI) |> dplyr::filter(EDO == 13)
+datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI, DIASEMANA) |> dplyr::filter(EDO == 13)
 
 datos$TIPACCID = sapply(datos$TIPACCID, tipaccid_correcion, simplify = T, USE.NAMES = F)
 datos$CLASE = sapply(datos$CLASE, clase_correcion, simplify = T, USE.NAMES = F)
 datos$EDO = sapply(datos$EDO, edo_correcion, simplify = T, USE.NAMES = F)
 datos$SEXO = sapply(datos$SEXO, sexo_correcion, simplify = T, USE.NAMES = F)
 datos$CAUSAACCI = sapply(datos$CAUSAACCI, causaacci_correcion, simplify = T, USE.NAMES = F)
+datos$DIASEMANA = sapply(datos$DIASEMANA, dia_semanal, simplify = T, USE.NAMES = F)
 
 mun = sf::read_sf("../Importantes_documentos_usar/Municipios/municipiosjair.shp")
 mun = mun |> dplyr::select(CVE_MUN, NOM_MUN) |> sf::st_drop_geometry()
 
 datos = merge(x = datos |> dplyr::mutate(MPIO = as.numeric(MPIO)) , y = mun |> dplyr::mutate(CVE_MUN = as.numeric(CVE_MUN)), by.x = "MPIO", by.y = "CVE_MUN")
 
-datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, NOM_MUN, SEXO, EDAD, CAUSAACCI) |>
+datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, NOM_MUN, SEXO, EDAD, CAUSAACCI, DIASEMANA) |>
   dplyr::arrange(ANIO, MES, DIA, HORA, MINUTOS)
 
 sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2022/2022.geojson", driver = "GeoJSON")
@@ -102,20 +116,21 @@ sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2022/2022.geojson", driver 
 ### 2023
 setwd("C:/Users/SIGEH/Desktop/Lalo/Gob/Proyectos")
 datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2023_shp/conjunto_de_datos/BASE MUNICIPAL_ACCIDENTES DE TRANSITO GEORREFERENCIADOS_2023.shp")
-datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI) |> dplyr::filter(EDO == 13)
+datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, MPIO, SEXO, EDAD, CAUSAACCI, DIASEMANA) |> dplyr::filter(EDO == 13)
 
 datos$TIPACCID = sapply(datos$TIPACCID, tipaccid_correcion, simplify = T, USE.NAMES = F)
 datos$CLASE = sapply(datos$CLASE, clase_correcion, simplify = T, USE.NAMES = F)
 datos$EDO = sapply(datos$EDO, edo_correcion, simplify = T, USE.NAMES = F)
 datos$SEXO = sapply(datos$SEXO, sexo_correcion, simplify = T, USE.NAMES = F)
 datos$CAUSAACCI = sapply(datos$CAUSAACCI, causaacci_correcion, simplify = T, USE.NAMES = F)
+datos$DIASEMANA = sapply(datos$DIASEMANA, dia_semanal, simplify = T, USE.NAMES = F)
 
 mun = sf::read_sf("../Importantes_documentos_usar/Municipios/municipiosjair.shp")
 mun = mun |> dplyr::select(CVE_MUN, NOM_MUN) |> sf::st_drop_geometry()
 
 datos = merge(x = datos |> dplyr::mutate(MPIO = as.numeric(MPIO)) , y = mun |> dplyr::mutate(CVE_MUN = as.numeric(CVE_MUN)), by.x = "MPIO", by.y = "CVE_MUN")
 
-datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, NOM_MUN, SEXO, EDAD, CAUSAACCI) |>
+datos = datos |> dplyr::select(TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, NOM_MUN, SEXO, EDAD, CAUSAACCI, DIASEMANA) |>
   dplyr::arrange(ANIO, MES, DIA, HORA, MINUTOS)
 
 datos = datos[- 2076, ]
@@ -178,10 +193,10 @@ write.csv(datos, "Accidentes_Mapa/Datos/Filtrados/2023/2023_puntos.csv", fileEnc
 ## Filtracion
 datos = sf::read_sf("Accidentes_Mapa/Datos/Sin filtrar/2025_C5/siniestros_bien.shp")
 datos$EDO = "Hidalgo"
-datos = datos |> dplyr::select(TIPACCI, CLASACC, AÑO, MES, DIA, ID_HORA, ID_MINU, EDO, ID_MUNI, SEXO, ID_EDAD, CAUSAAC) |>
+datos = datos |> dplyr::select(TIPACCI, CLASACC, AÑO, MES, DIA, ID_HORA, ID_MINU, EDO, ID_MUNI, SEXO, ID_EDAD, CAUSAAC, DIASEMA) |>
   dplyr::arrange(AÑO, MES, DIA, ID_HORA, ID_MINU)
 
-colnames(datos) = c("TIPACCID", "CLASE", "ANIO", "MES", "DIA", "HORA", "MINUTOS", "EDO", "NOM_MUN", "SEXO", "EDAD", "CAUSAACCI", "geometry")
+colnames(datos) = c("TIPACCID", "CLASE", "ANIO", "MES", "DIA", "HORA", "MINUTOS", "EDO", "NOM_MUN", "SEXO", "EDAD", "CAUSAACCI", "DIASEMANA" ,"geometry")
 sf::st_write(datos, "Accidentes_Mapa/Datos/Filtrados/2025_C5/2025.geojson", driver = "GeoJSON")
 sf::write_sf(datos, "Accidentes_Mapa/Datos/Filtrados/2025_C5/2025.shp")
 
