@@ -40,13 +40,28 @@ const sexo = new Promise((resolve, reject) => {
       data: {
         labels: dia,
         datasets: [{
-          label: 'Frecuencia',
+          label: 'Accidentados',
           data: frecuencias_sexo["2025"],
           backgroundColor: ['#0F1AF2', '#EF4BF2', '#ff0000'],
+          borderColor: '#ffffff',
+          borderWidth: 3,
+          hoverOffset: 6
         }]
       },
       options: {
+        responsive: true,
         maintainAspectRatio: false, // Disable maintaining aspect ratio
+        plugins: {
+          title: {
+            display: true,            
+            text: 'Accidentes por género (2025)', 
+            padding: {
+              top: 0,
+              bottom: 0
+            }
+          },
+        }
       }
-    });
+    }
+  );
   });

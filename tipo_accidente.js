@@ -23,10 +23,11 @@ const tipo_accidente = new Promise((resolve, reject) => {
     })
 });
 
-
+// Variables globales
 let frecuencias_tipo_accidente = {};
 let chart_tipo_accidente = null;
 
+// Crear el gráfico una vez que los datos están listos
 tipo_accidente.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
   frecuencias_tipo_accidente = {
     "2021": frecuencia2021,
@@ -43,26 +44,39 @@ tipo_accidente.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frec
       datasets: [{
         label: 'Frecuencia',
         data: frecuencias_tipo_accidente["2025"],
-        backgroundColor: "rgba(255, 76, 76, 0.5)",  
-        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: "rgba(179, 142, 93, 0.3)",  
+        borderColor: 'rgb(9, 86, 70)',
         borderWidth: 1
       }]
     },
     options: {
       indexAxis: 'y',
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
-          text: 'Tipo de accidente (2025)'
+          text: 'Tipo de accidente (2025)',
         },
         legend: {
           display: false
         }
       },
+      scales: {
+        y: {
+          ticks: {
+            mirror: true,
+            padding: 0,
+            crossAlign: 'near'
+          }
+        }
+      },
+      layout: {
+        padding: 0
+      },
       animation: {
-        duration: 1500, 
-        easing: 'easeOutCubic' 
+        duration: 1500,
+        easing: 'easeOutCubic'
       }
     }
   });

@@ -51,16 +51,17 @@ const posible_causa = new Promise((resolve, reject) => {
             `rgba(255, 99, 71, 0.7)`,    //Rojo coral
         ],
           borderColor: 'rgb(75, 192, 192)',
-          borderWidth: 1
+          borderWidth: 1,
         }]
       },
       options: {
         indexAxis: 'y',
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           title: {
             display: true,
-            text: 'Posible Causa (2025)'
+            text: 'Posible causa del accidente (2025)'
           },
           legend: {
             display: false

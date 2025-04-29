@@ -42,11 +42,25 @@ const clase_accidente = new Promise((resolve, reject) => {
         datasets: [{
           label: 'Frecuencia',
           data: frecuencias_clase_accidente["2025"],
-          backgroundColor: ['#0F1AF2', '#EF4BF2', '#ff0000'],
+          backgroundColor: ['#ff0000', '#008000', '#FF5F1F'],
+          borderColor: '#ffffff',
+          borderWidth: 3,
+          hoverOffset: 7
         }]
       },
       options: {
+        responsive: true,
         maintainAspectRatio: false, // Disable maintaining aspect ratio
+        plugins: {
+          title: {
+            display: true,            
+            text: 'Distribución de los accidentes por magnitud (2025)', 
+            padding: {
+              top: 0,
+              bottom: 0
+            }
+          },
+        }
       }
     });
   });

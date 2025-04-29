@@ -39,16 +39,16 @@
 
         #segunda_mitad {
             width: 30vw;
-            height: 100vh;       /* altura de toda la ventana */
-            overflow-y: auto;    /* habilita scroll vertical */
-            overflow-x: hidden; /* opcional: ocultar scroll horizontal */
-            padding: 0; /* si quieres un poco de padding interior */
-            display: flex; /* conviértelo en flex para apilar en columna si lo deseas */
+            height: 100vh;              /* altura de toda la ventana */
+            overflow-y: auto;           /* habilita scroll vertical */
+            overflow-x: hidden;         /* opcional: ocultar scroll horizontal */
+            padding: 0;                 /* si quieres un poco de padding interior */
+            display: flex;              /* conviértelo en flex para apilar en columna si lo deseas */
             flex-direction: column;
         }
         #segunda_mitad > div {
-            flex: 0 0 auto; /* que no crezcan más allá de su contenido */
-            margin-bottom: 8px; /* opcional: un margen entre gráficas */
+            flex: 0 0 auto;             /* que no crezcan más allá de su contenido */
+            margin-bottom: 8px;         /* opcional: un margen entre gráficas */
         }
         #map {
             width: 70vw;
@@ -131,12 +131,12 @@
         #tipo_accidente {
             display: block;
             width: 30vw;
-            height: 33vh;
+            height: 60vh;
         }
         #posible_causa {
             display: block;
             width: 30vw;
-            height: 33vh;
+            height: 40vh;
         }
         #clase_accidente {
             display: block;
@@ -194,5 +194,6 @@
     <script src="tipo_accidente.js"></script>
     <script src="clase_accidente.js"></script> 
     <script src="map.js"></script>          <!-- Script para el mapa -->
+    
 </body>
 </html>

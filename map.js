@@ -275,12 +275,12 @@ let anio = 0;
 
       // sexo
       chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
-      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.options.plugins.title.text = `Accidentes por género (${anio})`;
       chart_sexo.update(); 
 
       // posible_causa
       chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
-      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.options.plugins.title.text = `Posible causa del accidente (${anio})`;
       chart_posible_causa.update();
 
       // tipo_accidente
@@ -290,7 +290,7 @@ let anio = 0;
 
       // clase_accidente
       chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
-      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.options.plugins.title.text = `Distribución de los accidentes por magnitud(${anio})`;
       chart_clase_accidente.update();
     });
 
@@ -322,12 +322,12 @@ let anio = 0;
 
       //sexo
       chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
-      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.options.plugins.title.text = `Accidentes por género (${anio})`;
       chart_sexo.update(); 
 
       // posible_causa
       chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
-      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.options.plugins.title.text = `Posible causa del accidente (${anio})`;
       chart_posible_causa.update();
 
       // tipo_accidente
@@ -337,7 +337,7 @@ let anio = 0;
 
       // clase_accidente
       chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
-      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.options.plugins.title.text = `Distribución de los accidentes por magnitud (${anio})`;
       chart_clase_accidente.update();
     });
 
@@ -369,12 +369,12 @@ let anio = 0;
 
       //sexo
       chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
-      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.options.plugins.title.text = `Accidentes por género (${anio})`;
       chart_sexo.update();
       
       // posible_causa
       chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
-      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.options.plugins.title.text = `Posible causa del accidente (${anio})`;
       chart_posible_causa.update();
 
       // tipo_accidente
@@ -384,7 +384,7 @@ let anio = 0;
 
       // clase_accidente
       chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
-      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.options.plugins.title.text = `Distribución de los accidentes por magnitud (${anio})`;
       chart_clase_accidente.update();
     });
 
@@ -416,12 +416,12 @@ let anio = 0;
 
       //sexo
       chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
-      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.options.plugins.title.text = `Accidentes por género (${anio})`;
       chart_sexo.update();
       
       // posible_causa
       chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
-      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.options.plugins.title.text = `Posible causa del accidente (${anio})`;
       chart_posible_causa.update();
 
     // tipo_accidente
@@ -431,7 +431,7 @@ let anio = 0;
 
       // clase_accidente
       chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
-      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.options.plugins.title.text = `Distribución de los accidentes por magnitud (${anio})`;
       chart_clase_accidente.update();
     });
 
