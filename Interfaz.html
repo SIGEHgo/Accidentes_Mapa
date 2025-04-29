@@ -16,7 +16,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> <!-- FontAwesome CSS -->
   
     <style>
-        body { margin: 0; padding: 0; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         
         #contenedor_global {
             display: flex;
@@ -35,9 +39,16 @@
 
         #segunda_mitad {
             width: 30vw;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
+            height: 100vh;              /* altura de toda la ventana */
+            overflow-y: auto;           /* habilita scroll vertical */
+            overflow-x: hidden;         /* opcional: ocultar scroll horizontal */
+            padding: 0;                 /* si quieres un poco de padding interior */
+            display: flex;              /* conviértelo en flex para apilar en columna si lo deseas */
+            flex-direction: column;
+        }
+        #segunda_mitad > div {
+            flex: 0 0 auto;             /* que no crezcan más allá de su contenido */
+            margin-bottom: 8px;         /* opcional: un margen entre gráficas */
         }
         #map {
             width: 70vw;
@@ -112,6 +123,26 @@
             width: 30vw;
             height: 33vh;
         }
+        #sexo {
+            display: block;
+            width: 30vw;
+            height: 33vh;
+        }
+        #tipo_accidente {
+            display: block;
+            width: 30vw;
+            height: 60vh;
+        }
+        #posible_causa {
+            display: block;
+            width: 30vw;
+            height: 40vh;
+        }
+        #clase_accidente {
+            display: block;
+            width: 30vw;
+            height: 33vh;
+        }
     </style>
 </head>
 <body>
@@ -121,17 +152,15 @@
         </div>
             
         <div id="segunda_mitad">
-            <div id="arriba" style="width: 100%; height: 33vh;">
-                <canvas id="accidentes_mes"></canvas>
-            </div>
-            <div id="medio" style="width: 100%; height: 34vh;" >
-                <canvas id="dia_semana"></canvas>
-
-            </div>
-            <div id="abajo" style="width: 100%; height: 33vh;">
-                <canvas id="grupo_edad"></canvas>
-            </div>
-        </div>
+            <div><canvas id="accidentes_mes"></canvas></div>
+            <div><canvas id="dia_semana"></canvas></div>
+            <div><canvas id="grupo_edad"></canvas></div>
+            <div><canvas id="sexo"></canvas></div>
+            <div><canvas id="posible_causa"></canvas></div>
+            <div><canvas id="tipo_accidente"></canvas></div>
+            <div><canvas id="clase_accidente"></canvas></div>   
+          </div>
+          
     </div>
 
 
@@ -160,8 +189,11 @@
     <script src="accidentes_mes.js"></script>
     <script src="dia_semana.js"></script>
     <script src="grupo_edad.js"></script>
+    <script src="sexo.js"></script> 
+    <script src="posible_causa.js"></script>
+    <script src="tipo_accidente.js"></script>
+    <script src="clase_accidente.js"></script> 
     <script src="map.js"></script>          <!-- Script para el mapa -->
-
-
+    
 </body>
 </html>

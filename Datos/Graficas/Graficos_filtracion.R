@@ -247,6 +247,7 @@ for (i in seq_along(anios)) {
   
   
   ### Clase de accidente
+  datos$CLASE = sapply(datos$CLASE, clase_correcion, simplify = T, USE.NAMES = F)
   c = datos |> dplyr::select(CLASE) |> 
     dplyr::group_by(CLASE) |> dplyr::summarise(conteo = dplyr::n())
   
@@ -289,4 +290,6 @@ write.csv(posible_causa, "Accidentes_Mapa/Datos/Graficas/posible_causa.csv", fil
 
 ### Clase de accidente
 clase = clase |> dplyr::select(Clase, Frecuencia_2021:Frecuencia_2023, Frecuencia_2025)
+clase[is.na(clase)] = 0
+write.csv(clase, "Accidentes_Mapa/Datos/Graficas/clase.csv", fileEncoding = "UTF-8", row.names = F)
 
