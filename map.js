@@ -4,7 +4,15 @@ var map = L.map('map').setView([20, -98], 9);
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
-
+L.geoJSON(hidalgo, {
+  style: {
+      color: 'gray',
+      opacity: 0.5,
+      weight: 1,
+      fillColor: 'gray',
+      fillOpacity: 0.1
+  }
+}).addTo(map);
 let anio = 0;
 
     // Definir funciones que se usaran como predeterminadas despues
@@ -233,6 +241,7 @@ let anio = 0;
           map.addLayer(heat);
         }
       }
+      
     }
     quitar_anadir_circulos();
 
@@ -250,49 +259,13 @@ let anio = 0;
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[0].addEventListener("click", function() {
       console.log(this.children[0].children[1].innerHTML);
       quitar_anadir_circulos();
-      bounds = markersLayer2021.getBounds();
-      map.fitBounds(bounds);
+
 
 
       // Actualizador de graficas
       anio = parseInt(this.children[0].children[1].innerHTML, 10)
       console.log(anio);
 
-      // accidentes_mes
-      chart_accidentes_por_mes.data.datasets[0].data = frecuencias_accidentes_mes[anio];
-      chart_accidentes_por_mes.options.plugins.title.text = `Número de accidentes por mes (${anio})`;
-      chart_accidentes_por_mes.update();
-    
-      // dia_semana
-      chart_dia_semana.data.datasets[0].data = frecuencias_dia_semana[anio];
-      chart_dia_semana.options.plugins.title.text = `Incidencia de accidentes por día de la semana (${anio})`;
-      chart_dia_semana.update();
-
-      // grupo_edad
-      chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad[anio];
-      chart_grupo_edad.options.plugins.title.text = `Distribución de accidentes por grupos de edad (${anio})`;
-      chart_grupo_edad.update();
-
-      // sexo
-      chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
-      chart_sexo.options.plugins.title.text = `Accidentes por género (${anio})`;
-      chart_sexo.update(); 
-
-      // posible_causa
-      chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
-      chart_posible_causa.options.plugins.title.text = `Posible causa del accidente (${anio})`;
-      chart_posible_causa.update();
-
-      // tipo_accidente
-      chart_tipo_accidente.data.datasets[0].data = frecuencias_tipo_accidente[anio];
-      chart_tipo_accidente.options.plugins.title.text = `Distribución de accidentes por tipo (${anio})`;
-      chart_tipo_accidente.update();
-
-      // clase_accidente
-      chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
-      chart_clase_accidente.options.plugins.title.text = `Distribución de los accidentes por magnitud(${anio})`;
-      chart_clase_accidente.update();
-    });
 
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[1].addEventListener("click", function() {
       console.log(this.children[0].children[1].innerHTML);
@@ -439,3 +412,4 @@ let anio = 0;
 
     // Actualizar cuando el zoom termine.
     map.on('zoomend', quitar_anadir_circulos);
+    map.on('zoomend dragend', actualizarGraficasBasadoEnFeaturesVisibles);
