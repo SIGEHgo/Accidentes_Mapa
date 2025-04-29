@@ -1,5 +1,5 @@
-const sexo = new Promise((resolve, reject) => {
-    fetch("Datos/Graficas/sexo.csv")
+const clase_accidente = new Promise((resolve, reject) => {
+    fetch("Datos/Graficas/clase.csv")
       .then(response => response.text())
       .then(data => {
         const filas = data.trim().split("\n");
@@ -23,25 +23,25 @@ const sexo = new Promise((resolve, reject) => {
       })
   });
 
-  let frecuencias_sexo = {};
-  let chart_sexo = null;
+  let frecuencias_clase_accidente = {};
+  let chart_clase_accidente = null;
 
-  sexo.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
-    frecuencias_sexo = {
+  clase_accidente.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
+    frecuencias_clase_accidente = {
       "2021": frecuencia2021,
       "2022": frecuencia2022,
       "2023": frecuencia2023,
       "2025": frecuencia2025
     };
 
-    const ctx = document.getElementById('sexo').getContext('2d');
-    chart_sexo = new Chart(ctx, {
+    const ctx = document.getElementById('clase_accidente').getContext('2d');
+    chart_clase_accidente = new Chart(ctx, {
       type: 'pie',
       data: {
         labels: dia,
         datasets: [{
           label: 'Frecuencia',
-          data: frecuencias_sexo["2025"],
+          data: frecuencias_clase_accidente["2025"],
           backgroundColor: ['#0F1AF2', '#EF4BF2', '#ff0000'],
         }]
       },

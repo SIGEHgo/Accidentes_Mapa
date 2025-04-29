@@ -245,6 +245,8 @@ let anio = 0;
     
     
 
+
+
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[0].addEventListener("click", function() {
       console.log(this.children[0].children[1].innerHTML);
       quitar_anadir_circulos();
@@ -256,18 +258,40 @@ let anio = 0;
       anio = parseInt(this.children[0].children[1].innerHTML, 10)
       console.log(anio);
 
+      // accidentes_mes
       chart_accidentes_por_mes.data.datasets[0].data = frecuencias_accidentes_mes[anio];
       chart_accidentes_por_mes.options.plugins.title.text = `Número de accidentes por mes (${anio})`;
       chart_accidentes_por_mes.update();
-      
-
+    
+      // dia_semana
       chart_dia_semana.data.datasets[0].data = frecuencias_dia_semana[anio];
       chart_dia_semana.options.plugins.title.text = `Incidencia de accidentes por día de la semana (${anio})`;
       chart_dia_semana.update();
 
+      // grupo_edad
       chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad[anio];
       chart_grupo_edad.options.plugins.title.text = `Distribución de accidentes por grupos de edad (${anio})`;
       chart_grupo_edad.update();
+
+      // sexo
+      chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
+      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.update(); 
+
+      // posible_causa
+      chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
+      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.update();
+
+      // tipo_accidente
+      chart_tipo_accidente.data.datasets[0].data = frecuencias_tipo_accidente[anio];
+      chart_tipo_accidente.options.plugins.title.text = `Distribución de accidentes por tipo (${anio})`;
+      chart_tipo_accidente.update();
+
+      // clase_accidente
+      chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
+      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.update();
     });
 
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[1].addEventListener("click", function() {
@@ -281,17 +305,40 @@ let anio = 0;
       anio = parseInt(this.children[0].children[1].innerHTML, 10)
       console.log(anio);
 
+      // accidentes_mes
       chart_accidentes_por_mes.data.datasets[0].data = frecuencias_accidentes_mes[anio];
       chart_accidentes_por_mes.options.plugins.title.text = `Número de accidentes por mes (${anio})`;
       chart_accidentes_por_mes.update();
 
+      // dia_semana
       chart_dia_semana.data.datasets[0].data = frecuencias_dia_semana[anio];
       chart_dia_semana.options.plugins.title.text = `Incidencia de accidentes por día de la semana (${anio})`;
       chart_dia_semana.update();
 
+      // grupo_edad
       chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad[anio];
       chart_grupo_edad.options.plugins.title.text = `Distribución de accidentes por grupos de edad (${anio})`;
       chart_grupo_edad.update();
+
+      //sexo
+      chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
+      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.update(); 
+
+      // posible_causa
+      chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
+      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.update();
+
+      // tipo_accidente
+      chart_tipo_accidente.data.datasets[0].data = frecuencias_tipo_accidente[anio];
+      chart_tipo_accidente.options.plugins.title.text = `Distribución de accidentes por tipo (${anio})`;
+      chart_tipo_accidente.update();
+
+      // clase_accidente
+      chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
+      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.update();
     });
 
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[2].addEventListener("click", function() {
@@ -305,18 +352,40 @@ let anio = 0;
       anio = parseInt(this.children[0].children[1].innerHTML, 10)
       console.log(anio);
 
+      // accidentes_mes
       chart_accidentes_por_mes.data.datasets[0].data = frecuencias_accidentes_mes[anio];
       chart_accidentes_por_mes.options.plugins.title.text = `Número de accidentes por mes (${anio})`;
       chart_accidentes_por_mes.update();
 
+      // dia_semana
       chart_dia_semana.data.datasets[0].data = frecuencias_dia_semana[anio];
       chart_dia_semana.options.plugins.title.text = `Incidencia de accidentes por día de la semana (${anio})`;
       chart_dia_semana.update();
 
+      // grupo_edad
       chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad[anio];
       chart_grupo_edad.options.plugins.title.text = `Distribución de accidentes por grupos de edad (${anio})`;
       chart_grupo_edad.update();
 
+      //sexo
+      chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
+      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.update();
+      
+      // posible_causa
+      chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
+      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.update();
+
+      // tipo_accidente
+      chart_tipo_accidente.data.datasets[0].data = frecuencias_tipo_accidente[anio];
+      chart_tipo_accidente.options.plugins.title.text = `Distribución de accidentes por tipo (${anio})`;
+      chart_tipo_accidente.update();
+
+      // clase_accidente
+      chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
+      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.update();
     });
 
     document.getElementsByClassName("leaflet-control-layers-base")[0].children[3].addEventListener("click", function() {
@@ -329,19 +398,41 @@ let anio = 0;
       // Actualizador de graficas
       anio = parseInt(this.children[0].children[1].innerHTML, 10)
       console.log(anio);
-
+      
+      // accidentes_mes
       chart_accidentes_por_mes.data.datasets[0].data = frecuencias_accidentes_mes[anio];
       chart_accidentes_por_mes.options.plugins.title.text = `Número de accidentes por mes (${anio})`;
       chart_accidentes_por_mes.update();
 
-
+      // dia_semana
       chart_dia_semana.data.datasets[0].data = frecuencias_dia_semana[anio];
       chart_dia_semana.options.plugins.title.text = `Incidencia de accidentes por día de la semana (${anio})`;
       chart_dia_semana.update();
 
+      // grupo_edad
       chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad[anio];
       chart_grupo_edad.options.plugins.title.text = `Distribución de accidentes por grupos de edad (${anio})`;
       chart_grupo_edad.update();
+
+      //sexo
+      chart_sexo.data.datasets[0].data = frecuencias_sexo[anio];
+      chart_sexo.options.plugins.title.text = `Distribución de accidentes por sexo (${anio})`;
+      chart_sexo.update();
+      
+      // posible_causa
+      chart_posible_causa.data.datasets[0].data = frecuencias_posible_causa[anio];
+      chart_posible_causa.options.plugins.title.text = `Distribución de accidentes por posible causa (${anio})`;
+      chart_posible_causa.update();
+
+    // tipo_accidente
+      chart_tipo_accidente.data.datasets[0].data = frecuencias_tipo_accidente[anio];
+      chart_tipo_accidente.options.plugins.title.text = `Distribución de accidentes por tipo (${anio})`;
+      chart_tipo_accidente.update();
+
+      // clase_accidente
+      chart_clase_accidente.data.datasets[0].data = frecuencias_clase_accidente[anio];
+      chart_clase_accidente.options.plugins.title.text = `Distribución de accidentes por clase (${anio})`;
+      chart_clase_accidente.update();
     });
 
 
