@@ -296,8 +296,8 @@ let capa_actual = gjson2025;
     L.Control.Watermark = L.Control.extend({
       onAdd: function(map) {
           var img = L.DomUtil.create('img');
-          img.src = 'imagenes/Logos/planeacion_hidalgo.png';
-          img.style.width = '14vw';
+          img.src = 'imagenes/Logos/Juntos.png';
+          img.style.width = '25vw';
           img.style.marginBottom = '4vh';
           return img;
       },
@@ -323,12 +323,17 @@ let capa_actual = gjson2025;
       const frecuencias_genero = Array(3).fill(0);
       const frecuencias_causaA = Array(5).fill(0);
       const frecuencias_tipoAcc= Array(12).fill(0);
-      const vehiculos_conteo = Array(7).fill(0);//AUTOMOVIL BICICLETA CAMION CAMIONETA CAMPASAJ FERROCARRI MICROBUS MOTOCICLET OMNIBUS PASCAMION TRACTOR
+      const vehiculos_conteo = Array(7).fill(0);
+      //AUTOMOVIL BICICLETA CAMION CAMIONETA CAMPASAJ FERROCARRI MICROBUS MOTOCICLET OMNIBUS PASCAMION TRACTOR
     //   [1] "Caída de pasajero"                     "Colisión con animal"                   "Colisión con ciclista"                
     //   [4] "Colisión con ferrocarril"              "Colisión con motocicleta"              "Colisión con objeto fijo"             
     //   [7] "Colisión con peatón (atropellamiento)" "Colisión con vehículo automotor"       "Incendio"                             
     //  [10] "Otro"                                  "Salida del camino"                     "Volcadura" 
       const frecuencias_magnitud = Array(3).fill(0);
+      let totMuertos = 0;
+      let totHeridos = 0;
+      let totCondMuertos = 0;
+      let totCondHeridos = 0;
 
       capa_actual.features.forEach(feature => {
           const coords = feature.geometry.coordinates;
@@ -345,10 +350,11 @@ let capa_actual = gjson2025;
               const tipoAcc = feature.properties.TIPACCID;
               const magnitud = feature.properties.CLASE;
               const vehiculos_as_string= feature.properties.vehi_invol;
-              const saldos_Muertos= feature.properties.TOT_MUERT;
-              const saldos_Heridos= feature.properties.TOT_HER;
-              const saldos_COND_Muertos= feature.properties.CONDMUE;
-              const saldos_COND_Heridos= feature.properties.CONDHER;
+              const total_muertos = feature.properties.TOT_MUERT;
+              const total_heridos = feature.properties.TOT_HER;
+              const conductor_muertos = feature.properties.CONDMUE;
+              const conductor_heridos = feature.properties.CONDHER;
+
               //const saldo_vehiculos_o_personas
               
               let partes_conteo;
@@ -519,9 +525,16 @@ let capa_actual = gjson2025;
                   break;
                 }
                 }
+                totMuertos       += total_muertos;
+                totHeridos       += total_heridos;
+                totCondMuertos   += conductor_muertos;
+                totCondHeridos   += conductor_heridos;
           }
 
       });
+
+      totMuertos = totMuertos - totCondMuertos;
+      totHeridos = totHeridos - totCondHeridos;
 
       // console.log(histogram_horas)
       // console.log(frecuencias_accidentes_mes)
@@ -542,6 +555,7 @@ let capa_actual = gjson2025;
       chart_grupo_edad.data.datasets[0].data = frecuencias_grupo_edad;
       chart_grupo_edad.options.plugins.title.text = `Distribución de accidentes por grupos de edad (${anio})`;
       chart_grupo_edad.update();
+
       //sexo
       chart_sexo.data.datasets[0].data = frecuencias_genero;
       chart_sexo.options.plugins.title.text = `Accidentes por género (${anio})`;
@@ -581,15 +595,22 @@ let capa_actual = gjson2025;
       const filteredLabels = filteredData.map(item => item.label);
       const filteredValues = filteredData.map(item => item.value);
 
+      // Vehiculos involucrados
       chart_vehiculos_involucrados.data.labels = filteredLabels;
       chart_vehiculos_involucrados.data.datasets[0].data = filteredValues;
       chart_vehiculos_involucrados.options.plugins.title.text = `Número de vehículos involucrados en accidentes (${anio})`;
       chart_vehiculos_involucrados.update();
 
-
+      // histogram_horas
       chart_hora.data.datasets[0].data = histogram_horas;
       chart_hora.options.plugins.title.text = `Horas en las que suceden los accidentes (${anio})`;
       chart_hora.update();
+
+      // Afectados
+      chart_afectados.data.datasets[0].data = [totHeridos, totMuertos];
+      chart_afectados.data.datasets[1].data = [totCondHeridos, totCondMuertos];
+      chart_afectados.options.plugins.title.text = `Número de personas involucradas (${anio})`;
+      chart_afectados.update();
     }
 
 
@@ -645,7 +666,9 @@ let capa_actual = gjson2025;
     });
 
 
-
+    setTimeout(() => {
+      actualizarGraficasBasadoEnFeaturesVisibles();
+    }, 2000);  
     // Actualizar cuando el zoom termine.
     map.on('zoomend', quitar_anadir_circulos);
     map.on('zoomend dragend', actualizarGraficasBasadoEnFeaturesVisibles);
