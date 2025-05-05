@@ -26,7 +26,53 @@ const tipo_accidente = new Promise((resolve, reject) => {
 // Variables globales
 let frecuencias_tipo_accidente = {};
 let chart_tipo_accidente = null;
+const plugin_actualizar_eleccion_cruzada=[{
+  id: 'customEventListener',
+  afterEvent: (chart, evt) => {
+      if (evt.event.type == 'click') {
+          const points = chart.getElementsAtEventForMode(evt.event, 'y', { intersect: false }, true);
+          if (points.length > 0) {
+              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
+              const index = points[0].index;  // Índice de la barra clickeada
+              
+              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
+              console.log(label)
+              array_ofMarkers = capa_actual.features.filter((feature) => {
+                return feature.properties.TIPACCID.includes(label);
+              });
 
+              array_ofMarkers.forEach((marker) => {
+                  const [lng, lat] = marker.geometry.coordinates;
+
+                  // Create a circle with animation
+                  const circle = L.circle([lat, lng], {
+                      radius: 10,
+                      weight: 5,
+                      color: '#e03',
+                      stroke: true,
+                      fill: false
+                  }).addTo(map);
+
+                  // Animate the circle
+                  animateCircle(circle);
+              });
+
+              function animateCircle(circle) {
+                  let radius = 100;
+                  const interval = setInterval(() => {
+                      radius -= 5;
+                      if (radius < 5) {
+                          map.removeLayer(circle);
+                          clearInterval(interval);
+                      } else {
+                          circle.setRadius(radius);
+                      }
+                  }, 100);
+              }
+          }
+      }
+  }
+}]
 // Crear el gráfico una vez que los datos están listos
 tipo_accidente.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
   frecuencias_tipo_accidente = {
@@ -49,6 +95,7 @@ tipo_accidente.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frec
         borderWidth: 1
       }]
     },
+    responsive: true,
     options: {
       indexAxis: 'y',
       responsive: true,
@@ -56,7 +103,7 @@ tipo_accidente.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frec
       plugins: {
         title: {
           display: true,
-          text: 'Tipo de accidente (2025)',
+          text: 'Distribución de accidentes por tipo (2025)',
         },
         legend: {
           display: false
@@ -74,10 +121,8 @@ tipo_accidente.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frec
       layout: {
         padding: 0
       },
-      animation: {
-        duration: 1500,
-        easing: 'easeOutCubic'
-      }
-    }
+
+    },
+    plugins: plugin_actualizar_eleccion_cruzada,
   });
 });

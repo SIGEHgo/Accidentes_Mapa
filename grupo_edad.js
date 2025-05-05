@@ -1,3 +1,59 @@
+const plugin_actualizar_eleccion_cruzada_edad=[{
+  id: 'customEventListener',
+  afterEvent: (chart, evt) => {
+      if (evt.event.type == 'click') {
+        const points = chart.getElementsAtEventForMode(evt.event, 'y', { intersect: false }, true);
+          if (points.length > 0) {
+              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
+              const index = points[0].index;  // Índice de la barra clickeada
+              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
+              console.log(label);
+              array_ofMarkers = capa_actual.features.filter((feature) => {
+                const edad = feature.properties.EDAD === "Se fugó" ? "Se fugó" : parseInt(feature.properties.EDAD, 10);
+                if (label === "15-29" && typeof edad === 'number' && edad >= 15 && edad <= 29) {
+                return true;
+                } else if (label === "30-59" && typeof edad === 'number' && edad >= 30 && edad <= 59) {
+                return true;
+                } else if (label === "60-99" && typeof edad === 'number' && edad >= 60 && edad <= 98) {
+                return true;
+                } else if (label === "Desconocido" && (edad === "Se fugó" || typeof edad !== 'number' || edad < 15 || edad > 98)) {
+                return true;
+                }
+                return false;
+              });
+
+              array_ofMarkers.forEach((marker) => {
+                  const [lng, lat] = marker.geometry.coordinates;
+
+                  // Create a circle with animation
+                  const circle = L.circle([lat, lng], {
+                      radius: 10,
+                      weight: 5,
+                      color: '#e03',
+                      stroke: true,
+                      fill: false
+                  }).addTo(map);
+
+                  // Animate the circle
+                  animateCircle(circle);
+              });
+
+              function animateCircle(circle) {
+                  let radius = 100;
+                  const interval = setInterval(() => {
+                      radius -= 5;
+                      if (radius < 5) {
+                          map.removeLayer(circle);
+                          clearInterval(interval);
+                      } else {
+                          circle.setRadius(radius);
+                      }
+                  }, 100);
+              }
+          }
+      }
+  }
+}]
 const grupo_edad = new Promise((resolve, reject) => {
     fetch("Datos/Graficas/grupo_edad.csv")
       .then(response => response.text())
@@ -44,13 +100,13 @@ const grupo_edad = new Promise((resolve, reject) => {
           label: 'Frecuencia',
           data: frecuencias_grupo_edad["2025"],
           backgroundColor: [
-            "rgba(255, 76, 76, 0.5)",  // 15-29 años: Rojo vibrante
-            "rgba(255, 195, 0,  0.5)",  // 30-59 años: Amarillo fuerte
-            "rgba(0, 123, 255,  0.5)",  // 60-99 años: Azul fuerte
-            "rgba(108, 117, 125,  0.5)" // Desconocido: Gris oscuro
+            "rgba(255, 76, 76, 0.2)",  // 15-29 años: Rojo vibrante
+            "rgba(255, 195, 0,  0.2)",  // 30-59 años: Amarillo fuerte
+            "rgba(0, 123, 255,  0.2)",  // 60-99 años: Azul fuerte
+            "rgba(14, 4, 4, 0.3)" // Desconocido: Gris oscuro
           ],
-          borderColor: 'rgb(75, 192, 192)',
-          borderWidth: 1
+          borderColor: 'rgba(0, 0, 0, 1)', // Color del borde
+          borderWidth: 0.3
         }]
       },
       options: {
@@ -69,6 +125,7 @@ const grupo_edad = new Promise((resolve, reject) => {
           duration: 1500, 
           easing: 'easeOutCubic' 
         }
-      }
+      },
+      plugins:plugin_actualizar_eleccion_cruzada_edad
     });
   });

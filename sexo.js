@@ -1,3 +1,52 @@
+const plugin_actualizar_eleccion_cruzada_genero=[{
+  id: 'customEventListener',
+  afterEvent: (chart, evt) => {
+      if (evt.event.type == 'click') {
+            const points = chart.getElementsAtEventForMode(evt.event, 'nearest', { intersect: true }, true);
+          if (points.length > 0) {
+              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
+              const index = points[0].index;  // Índice de la barra clickeada
+              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
+              array_ofMarkers = capa_actual.features.filter((feature) => {
+                if(label === "Hombre" || label === "Mujer"){
+                  return feature.properties.SEXO === label;
+                }else{
+                  return feature.properties.SEXO!=="Hombre" && feature.properties.SEXO!=="Mujer" 
+                }
+              });
+
+              array_ofMarkers.forEach((marker) => {
+                  const [lng, lat] = marker.geometry.coordinates;
+
+                  // Create a circle with animation
+                  const circle = L.circle([lat, lng], {
+                      radius: 10,
+                      weight: 5,
+                      color: '#e03',
+                      stroke: true,
+                      fill: false
+                  }).addTo(map);
+
+                  // Animate the circle
+                  animateCircle(circle);
+              });
+
+              function animateCircle(circle) {
+                  let radius = 100;
+                  const interval = setInterval(() => {
+                      radius -= 5;
+                      if (radius < 5) {
+                          map.removeLayer(circle);
+                          clearInterval(interval);
+                      } else {
+                          circle.setRadius(radius);
+                      }
+                  }, 100);
+              }
+          }
+      }
+  }
+}]
 const sexo = new Promise((resolve, reject) => {
     fetch("Datos/Graficas/sexo.csv")
       .then(response => response.text())
@@ -42,7 +91,12 @@ const sexo = new Promise((resolve, reject) => {
         datasets: [{
           label: 'Accidentados',
           data: frecuencias_sexo["2025"],
-          backgroundColor: ['#0F1AF2', '#EF4BF2', '#ff0000'],
+          backgroundColor: [
+            "rgba(255, 76, 76, 0.4)",  // 15-29 años: Rojo vibrante
+            "rgba(255, 195, 0,  0.3)",  // 30-59 años: Amarillo fuerte
+            "rgba(0, 123, 255,  0.3)",  // 60-99 años: Azul fuerte
+            "rgba(108, 117, 125,  0.1)" // Desconocido: Gris oscuro
+          ],
           borderColor: '#ffffff',
           borderWidth: 3,
           hoverOffset: 6
@@ -61,7 +115,9 @@ const sexo = new Promise((resolve, reject) => {
             }
           },
         }
-      }
+      },
+      plugins: plugin_actualizar_eleccion_cruzada_genero,
     }
+    
   );
   });

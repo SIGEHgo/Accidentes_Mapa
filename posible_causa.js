@@ -1,3 +1,49 @@
+const plugin_actualizar_eleccion_cruzada_causa=[{
+  id: 'customEventListener',
+  afterEvent: (chart, evt) => {
+      if (evt.event.type == 'click') {
+          const points = chart.getElementsAtEventForMode(evt.event, 'y', { intersect: false }, true);
+          if (points.length > 0) {
+              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
+              const index = points[0].index;  // Índice de la barra clickeada
+              
+              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
+              array_ofMarkers = capa_actual.features.filter((feature) => {
+                return feature.properties.CAUSAACCI.includes(label);
+              });
+
+              array_ofMarkers.forEach((marker) => {
+                  const [lng, lat] = marker.geometry.coordinates;
+
+                  // Create a circle with animation
+                  const circle = L.circle([lat, lng], {
+                      radius: 10,
+                      weight: 5,
+                      color: '#e03',
+                      stroke: true,
+                      fill: false
+                  }).addTo(map);
+
+                  // Animate the circle
+                  animateCircle(circle);
+              });
+
+              function animateCircle(circle) {
+                  let radius = 100;
+                  const interval = setInterval(() => {
+                      radius -= 5;
+                      if (radius < 5) {
+                          map.removeLayer(circle);
+                          clearInterval(interval);
+                      } else {
+                          circle.setRadius(radius);
+                      }
+                  }, 100);
+              }
+          }
+      }
+  }
+}]
 const posible_causa = new Promise((resolve, reject) => {
     fetch("Datos/Graficas/posible_causa.csv")
       .then(response => response.text())
@@ -71,6 +117,7 @@ const posible_causa = new Promise((resolve, reject) => {
           duration: 1500, 
           easing: 'easeOutCubic' 
         }
-      }
+      },
+      plugins: plugin_actualizar_eleccion_cruzada_causa
     });
   });

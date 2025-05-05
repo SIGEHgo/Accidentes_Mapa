@@ -1,3 +1,48 @@
+const plugin_actualizar_eleccion_cruzada_clase=[{
+  id: 'customEventListener',
+  afterEvent: (chart, evt) => {
+      if (evt.event.type == 'click') {
+            const points = chart.getElementsAtEventForMode(evt.event, 'nearest', { intersect: true }, true);
+          if (points.length > 0) {
+              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
+              const index = points[0].index;  // Índice de la barra clickeada
+              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
+              array_ofMarkers = capa_actual.features.filter((feature) => {
+                return feature.properties.CLASE.includes(label);
+              });
+
+              array_ofMarkers.forEach((marker) => {
+                  const [lng, lat] = marker.geometry.coordinates;
+
+                  // Create a circle with animation
+                  const circle = L.circle([lat, lng], {
+                      radius: 10,
+                      weight: 5,
+                      color: '#e03',
+                      stroke: true,
+                      fill: false
+                  }).addTo(map);
+
+                  // Animate the circle
+                  animateCircle(circle);
+              });
+
+              function animateCircle(circle) {
+                  let radius = 100;
+                  const interval = setInterval(() => {
+                      radius -= 5;
+                      if (radius < 5) {
+                          map.removeLayer(circle);
+                          clearInterval(interval);
+                      } else {
+                          circle.setRadius(radius);
+                      }
+                  }, 100);
+              }
+          }
+      }
+  }
+}]
 const clase_accidente = new Promise((resolve, reject) => {
     fetch("Datos/Graficas/clase.csv")
       .then(response => response.text())
@@ -42,7 +87,7 @@ const clase_accidente = new Promise((resolve, reject) => {
         datasets: [{
           label: 'Frecuencia',
           data: frecuencias_clase_accidente["2025"],
-          backgroundColor: ['#ff0000', '#008000', '#FF5F1F'],
+          backgroundColor: ['rgba(110, 172, 218,0.6)','rgba(226, 226, 182,0.6)','rgba(2, 21, 38,0.6)'],
           borderColor: '#ffffff',
           borderWidth: 3,
           hoverOffset: 7
@@ -61,6 +106,7 @@ const clase_accidente = new Promise((resolve, reject) => {
             }
           },
         }
-      }
+      },
+      plugins:plugin_actualizar_eleccion_cruzada_clase
     });
   });

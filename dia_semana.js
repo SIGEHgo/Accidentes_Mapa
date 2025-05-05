@@ -1,3 +1,48 @@
+const plugin_actualizar_eleccion_cruzada_diasemana=[{
+  id: 'customEventListener',
+  afterEvent: (chart, evt) => {
+      if (evt.event.type == 'click') {
+            const points = chart.getElementsAtEventForMode(evt.event, 'nearest', { intersect: true }, true);
+          if (points.length > 0) {
+              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
+              const index = points[0].index;  // Índice de la barra clickeada
+              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
+              array_ofMarkers = capa_actual.features.filter((feature) => {
+                return feature.properties.DIASEMANA.includes(label);
+              });
+
+              array_ofMarkers.forEach((marker) => {
+                  const [lng, lat] = marker.geometry.coordinates;
+
+                  // Create a circle with animation
+                  const circle = L.circle([lat, lng], {
+                      radius: 10,
+                      weight: 5,
+                      color: '#e03',
+                      stroke: true,
+                      fill: false
+                  }).addTo(map);
+
+                  // Animate the circle
+                  animateCircle(circle);
+              });
+
+              function animateCircle(circle) {
+                  let radius = 100;
+                  const interval = setInterval(() => {
+                      radius -= 5;
+                      if (radius < 5) {
+                          map.removeLayer(circle);
+                          clearInterval(interval);
+                      } else {
+                          circle.setRadius(radius);
+                      }
+                  }, 100);
+              }
+          }
+      }
+  }
+}]
 const dia_semana_csv = new Promise((resolve, reject) => {
     fetch("Datos/Graficas/dia_semana.csv")
       .then(response => response.text())
@@ -43,12 +88,7 @@ const dia_semana_csv = new Promise((resolve, reject) => {
         data: frecuencias_dia_semana["2025"],
         backgroundColor: [
           `rgba(100, 120, 150, 0.7)`,   //Gris azulado
-          `rgba(0, 128, 80, 0.7)`,     //Verde esmeralda
-          `rgba(255, 223, 70, 0.7)`,   //Amarillo
-          `rgba(255, 140, 0, 0.7)`,    //Naranja
-          `rgba(255, 99, 71, 0.7)`,    //Rojo coral
-          `rgba(135, 206, 235, 0.7)`,  //Azul cielo
-          `rgba(180, 130, 255, 0.7)`   //Violeta suave
+     //Violeta suave
       ],
         borderColor: 'rgb(75, 192, 192)',
         borderWidth: 1
@@ -70,6 +110,8 @@ const dia_semana_csv = new Promise((resolve, reject) => {
           duration: 1500, // 1 segundo de animación
           easing: 'easeOutCubic' // animación más fluida
         }
-      }
+      },
+      plugins: plugin_actualizar_eleccion_cruzada_diasemana
     });
   });
+  

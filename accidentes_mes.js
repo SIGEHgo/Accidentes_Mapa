@@ -1,3 +1,63 @@
+const meses_largos = {
+  'Ene': 'Enero',
+  'Feb': 'Febrero',
+  'Mar': 'Marzo',
+  'Abr': 'Abril',
+  'May': 'Mayo',
+  'Jun': 'Junio',
+  'Jul': 'Julio',
+  'Ago': 'Agosto',
+  'Sep': 'Septiembre',
+  'Oct': 'Octubre',
+  'Nov': 'Noviembre',
+  'Dic': 'Diciembre'
+};
+const plugin_actualizar_eleccion_cruzada_mes=[{
+  id: 'customEventListener',
+  afterEvent: (chart, evt) => {
+      if (evt.event.type == 'click') {
+            const points = chart.getElementsAtEventForMode(evt.event, 'x', { intersect: true }, true);
+          if (points.length > 0) {
+              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
+              const index = points[0].index;  // Índice de la barra clickeada
+              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
+              console.log(label);
+              array_ofMarkers = capa_actual.features.filter((feature) => {
+              return feature.properties.MES === Object.keys(meses_largos).indexOf(label) + 1;
+              });
+
+              array_ofMarkers.forEach((marker) => {
+                  const [lng, lat] = marker.geometry.coordinates;
+
+                  // Create a circle with animation
+                  const circle = L.circle([lat, lng], {
+                      radius: 10,
+                      weight: 5,
+                      color: '#e03',
+                      stroke: true,
+                      fill: false
+                  }).addTo(map);
+
+                  // Animate the circle
+                  animateCircle(circle);
+              });
+
+              function animateCircle(circle) {
+                  let radius = 100;
+                  const interval = setInterval(() => {
+                      radius -= 5;
+                      if (radius < 5) {
+                          map.removeLayer(circle);
+                          clearInterval(interval);
+                      } else {
+                          circle.setRadius(radius);
+                      }
+                  }, 100);
+              }
+          }
+      }
+  }
+}]
 const accidentes_por_mes = new Promise((resolve, reject) => {
   fetch("Datos/Graficas/accidentes_por_mes.csv")
     .then(response => response.text())
@@ -52,25 +112,14 @@ accidentes_por_mes.then(({dia, frecuencia2021, frecuencia2022, frecuencia2023, f
       }]
     },
     options: {
+      responsive: true,    // Hace que la gráfica sea responsiva
+      maintainAspectRatio: false, // Mantiene la relación de aspecto
       plugins: {
         tooltip: {
           enabled: true,     // Aparece cuando pasas el mouse encima de un punto
           callbacks: {      // <-- AQUI AÑADIMOS LA PERSONALIZACION
             title: function(tooltipItems) {
-              const meses_largos = {
-                'Ene': 'Enero',
-                'Feb': 'Febrero',
-                'Mar': 'Marzo',
-                'Abr': 'Abril',
-                'May': 'Mayo',
-                'Jun': 'Junio',
-                'Jul': 'Julio',
-                'Ago': 'Agosto',
-                'Sep': 'Septiembre',
-                'Oct': 'Octubre',
-                'Nov': 'Noviembre',
-                'Dic': 'Diciembre'
-              };
+              
               const mes_corto = tooltipItems[0].label;
               return meses_largos[mes_corto] || mes_corto; // Si no encuentra, deja el mismo label
             }
@@ -102,6 +151,6 @@ accidentes_por_mes.then(({dia, frecuencia2021, frecuencia2022, frecuencia2023, f
         easing: 'easeOutQuart'    // Tipo de animación: más suave y elegante
       },
     },
-    // plugins: [ChartDataLabels] // pone automáticamente los valores encima de cada punto.
+    plugins: plugin_actualizar_eleccion_cruzada_mes,
   });
 });

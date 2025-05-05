@@ -183,16 +183,15 @@
         <div class="modal-body">
             Este mapa web te muestra todos los accidentes registrados en Hidalgo en los distintos años.
             <ul>
-                <li> <strong> Mapa de calor: </strong> Las zonas con más choques aparecen con colores fuertes. </li>
+                <li> <strong> Mapa de calor: </strong> Las zonas con más accidentes vehiculares aparecen con colores fuertes. </li>
                 <li> <strong> Gráficos dinámicos: </strong> A la derecha, los gráficos cambian según la zona que mires. </li>
                 <li> <strong> Zoom detallado:</strong> Al acercarte, el mapa pasa de colores a puntos de ubicación exacta. </li>
-                <li> <strong> Datos rápidos: </strong> Pasa el cursor sobre un punto para ver información breve. </li>
                 <li> <strong> Vista completa: </strong> Haz clic en el punto para abrir una ficha con todos los detalles. </li>
             </ul>
             Además, la información sobre los accidentes proviene de las siguientes fuentes:
             <ul>
-                <li> Los datos de los años <strong>2021</strong>, <strong>2022</strong> y <strong>2023</strong> fueron obtenidos del <a href="https://gaia.inegi.org.mx/mdm6/?v=bGF0OjIwLjA4NDIxLGxvbjotOTguNzc2ODUsejo4LGw6Y2x1c3Rlcl9hY2NpZGVudGVzfGNoZWF0bWFw" target="_blank">INEGI</a> </li>
-                <li> La información del año <strong> 2025 </strong> fue proporcionada por la <a href="https://s-seguridad.hidalgo.gob.mx/#" target="_blank"> SECRETARÍA DE SEGURIDAD PÚBLICA </a> a través de la Secretaría de Movilidad y Transporte </li>
+                <li> Los datos de los años <strong>2021</strong>, <strong>2022</strong> y <strong>2023</strong> fueron obtenidos de <a href="https://gaia.inegi.org.mx/mdm6/?v=bGF0OjIwLjA4NDIxLGxvbjotOTguNzc2ODUsejo4LGw6Y2x1c3Rlcl9hY2NpZGVudGVzfGNoZWF0bWFw" target="_blank">INEGI</a> </li>
+                <li> La información del año <strong> 2025 </strong> fue proporcionada por la Secretaría de Seguridad Pública </a> a través de la Secretaría de Movilidad y Transporte </li>
             <ul>   
         </div>
         <div class="modal-footer">
@@ -211,7 +210,7 @@
             <div><canvas id="dia_semana"></canvas></div>
             <div><canvas id="hora"></canvas></div>
             <div><canvas id="tipo_accidente"></canvas></div>
-            <div><canvas id="vehiculos_involucrados"></canvas></div>   
+            <div style="display: none;"><canvas id="vehiculos_involucrados"></canvas></div>   
             <div><canvas id="clase_accidente"></canvas></div>  
             <div><canvas id="grupo_edad"></canvas></div> 
             <div><canvas id="sexo"></canvas></div>
@@ -245,6 +244,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Scripts de las graficas -->
+     <script src="dispositivo_movil.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="accidentes_mes.js"></script>
