@@ -1,98 +1,122 @@
-const plugin_actualizar_eleccion_cruzada_diasemana=[{
-  id: 'customEventListener',
-  afterEvent: (chart, evt) => {
-      if (evt.event.type == 'click') {
-            const points = chart.getElementsAtEventForMode(evt.event, 'nearest', { intersect: true }, true);
-          if (points.length > 0) {
-              const datasetIndex = points[0].datasetIndex;  // Índice del dataset
-              const index = points[0].index;  // Índice de la barra clickeada
-              let label = chart.data.labels[index];  // Obtener etiqueta de la barra
-              array_ofMarkers = capa_actual.features.filter((feature) => {
-                return feature.properties.DIASEMANA.includes(label);
-              });
+const plugin_actualizar_eleccion_cruzada_diasemana = [
+  {
+    id: "customEventListener",
+    afterEvent: (chart, evt) => {
+      if (evt.event.type == "click") {
+        const points = chart.getElementsAtEventForMode(
+          evt.event,
+          "nearest",
+          { intersect: true },
+          true
+        );
+        if (points.length > 0) {
+          const datasetIndex = points[0].datasetIndex; // Índice del dataset
+          const index = points[0].index; // Índice de la barra clickeada
+          let label = chart.data.labels[index]; // Obtener etiqueta de la barra
+          const bounds = map.getBounds();
+          array_ofMarkers = capa_actual.features.filter((feature) => {
+            return (
+              feature.properties.DIASEMANA.includes(label) &
+              bounds.contains(
+                L.latLng(
+                  feature.geometry.coordinates[1],
+                  feature.geometry.coordinates[0]
+                )
+              )
+            );
+          });
 
-              array_ofMarkers.forEach((marker) => {
-                  const [lng, lat] = marker.geometry.coordinates;
+          array_ofMarkers.forEach((marker) => {
+            const [lng, lat] = marker.geometry.coordinates;
 
-                  // Create a circle with animation
-                  const circle = L.circle([lat, lng], {
-                      radius: 10,
-                      weight: 5,
-                      color: '#e03',
-                      stroke: true,
-                      fill: false
-                  }).addTo(map);
+            // Create a circle with animation
+            const circle = L.circle([lat, lng], {
+              radius: 10,
+              weight: 5,
+              color: "#e03",
+              stroke: true,
+              fill: false,
+            }).addTo(map);
 
-                  // Animate the circle
-                  animateCircle(circle);
-              });
+            // Animate the circle
+            animateCircle(circle);
+          });
 
-              function animateCircle(circle) {
-                  let radius = 100;
-                  const interval = setInterval(() => {
-                      radius -= 5;
-                      if (radius < 5) {
-                          map.removeLayer(circle);
-                          clearInterval(interval);
-                      } else {
-                          circle.setRadius(radius);
-                      }
-                  }, 100);
+          function animateCircle(circle) {
+            let radius = 300;
+            const interval = setInterval(() => {
+              radius -= 20;
+              if (radius < 5) {
+                map.removeLayer(circle);
+                clearInterval(interval);
+              } else {
+                circle.setRadius(radius);
               }
-          }
-      }
-  }
-}]
-const dia_semana_csv = new Promise((resolve, reject) => {
-    fetch("Datos/Graficas/dia_semana.csv")
-      .then(response => response.text())
-      .then(data => {
-        const filas = data.trim().split("\n");
-        const dia = [];
-        const frecuencia2021 = [];
-        const frecuencia2022 = [];
-        const frecuencia2023 = [];
-        const frecuencia2025 = [];
-
-        for (let i = 1; i < filas.length; i++) {
-          const columnas = filas[i].split(",");
-          if (columnas.length >= 5) {
-            dia.push(columnas[0].replace(/"/g, ''));
-            frecuencia2021.push(columnas[1]);
-            frecuencia2022.push(columnas[2]);
-            frecuencia2023.push(columnas[3]);
-            frecuencia2025.push(columnas[4]);
+            }, 100);
           }
         }
-        resolve({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 });
-      })
-  });
+      }
+    },
+  },
+];
+const dia_semana_csv = new Promise((resolve, reject) => {
+  fetch("Datos/Graficas/dia_semana.csv")
+    .then((response) => response.text())
+    .then((data) => {
+      const filas = data.trim().split("\n");
+      const dia = [];
+      const frecuencia2021 = [];
+      const frecuencia2022 = [];
+      const frecuencia2023 = [];
+      const frecuencia2025 = [];
 
-  let frecuencias_dia_semana = {};
-  let chart_dia_semana = null;
-  dia_semana_csv.then(({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
+      for (let i = 1; i < filas.length; i++) {
+        const columnas = filas[i].split(",");
+        if (columnas.length >= 5) {
+          dia.push(columnas[0].replace(/"/g, ""));
+          frecuencia2021.push(columnas[1]);
+          frecuencia2022.push(columnas[2]);
+          frecuencia2023.push(columnas[3]);
+          frecuencia2025.push(columnas[4]);
+        }
+      }
+      resolve({
+        dia,
+        frecuencia2021,
+        frecuencia2022,
+        frecuencia2023,
+        frecuencia2025,
+      });
+    });
+});
+
+let frecuencias_dia_semana = {};
+let chart_dia_semana = null;
+dia_semana_csv.then(
+  ({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
     frecuencias_dia_semana = {
-      "2021": frecuencia2021,
-      "2022": frecuencia2022,
-      "2023": frecuencia2023,
-      "2025": frecuencia2025
+      2021: frecuencia2021,
+      2022: frecuencia2022,
+      2023: frecuencia2023,
+      2025: frecuencia2025,
     };
 
-    const ctx = document.getElementById('dia_semana').getContext('2d');
-    chart_dia_semana= new Chart(ctx, {
-      type: 'bar',
+    const ctx = document.getElementById("dia_semana").getContext("2d");
+    chart_dia_semana = new Chart(ctx, {
+      type: "bar",
       data: {
-      labels: dia,
-      datasets: [{
-        label: 'Cantidad de accidentes',
-        data: frecuencias_dia_semana["2025"],
-        backgroundColor: [
-          `rgba(100, 120, 150, 0.7)`,   //Gris azulado
-     //Violeta suave
-      ],
-        borderColor: 'rgb(75, 192, 192)',
-        borderWidth: 1
-      }]
+        labels: dia,
+        datasets: [
+          {
+            label: "Cantidad de accidentes",
+            data: frecuencias_dia_semana["2025"],
+            backgroundColor: [
+              `rgba(100, 120, 150, 0.4)`, // Gris azulado
+            ],
+            borderColor: "rgb(75, 192, 192)",
+            borderWidth: 1,
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -100,18 +124,28 @@ const dia_semana_csv = new Promise((resolve, reject) => {
         plugins: {
           title: {
             display: true,
-            text: 'Incidencia de accidentes por día de la semana (2025)'
+            text: "Incidencia de accidentes por día de la semana (2025)",
           },
           legend: {
-            display: false
-          }
+            display: false,
+          },
+        },
+        scales: {
+          y: {
+            ticks: {
+              stepSize: 1, // Ensure only integer values
+              callback: function (value) {
+                return Number.isInteger(value) ? value : null;
+              },
+            },
+          },
         },
         animation: {
           duration: 1500, // 1 segundo de animación
-          easing: 'easeOutCubic' // animación más fluida
-        }
+          easing: "easeOutCubic", // animación más fluida
+        },
       },
-      plugins: plugin_actualizar_eleccion_cruzada_diasemana
+      plugins: plugin_actualizar_eleccion_cruzada_diasemana,
     });
-  });
-  
+  }
+);

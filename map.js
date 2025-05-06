@@ -339,7 +339,14 @@ let capa_actual = gjson2025;
       if (anio === 2025) {
         Contenedor_vehiculo.style.display = 'none';
       } else {
+        if(window.screen.width < 768){
         Contenedor_vehiculo.style.display = 'block';
+        Contenedor_vehiculo.style.width='40vw';
+        }
+        else{
+        Contenedor_vehiculo.style.display = 'block';
+        Contenedor_vehiculo.style.height='33vh';
+        }
       }
 
 
