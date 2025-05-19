@@ -131,10 +131,11 @@ let capa_actual = gjson2025;
           </a>
         `)
         .join('');
-      const texto_final=p.TOT_MUERT!=null? 
+      const texto_final=p.ANIO==
+      2025.0? 
           saldoHtml: 
           vehiculosHtml;
-      const titulo_final=p.TOT_MUERT!=null? 
+      const titulo_final=p.ANIO==2025.0? 
           `<h3 style="margin-top: 0.5vh;margin-bottom: 1vh;">Personas involucradas</h3>`:
           `<h3 style="margin-top: 0.5vh;margin-bottom: 1vh;">Vehículos involucrados</h3>`;
           vehiculosHtml;
@@ -334,6 +335,20 @@ let capa_actual = gjson2025;
       let totHeridos = 0;
       let totCondMuertos = 0;
       let totCondHeridos = 0;
+      const Contenedor_vehiculo = document.getElementById('vehiculos_involucrados').parentElement;
+      if (anio === 2025) {
+        Contenedor_vehiculo.style.display = 'none';
+      } else {
+        if(window.screen.width < 768){
+        Contenedor_vehiculo.style.display = 'block';
+        Contenedor_vehiculo.style.width='40vw';
+        }
+        else{
+        Contenedor_vehiculo.style.display = 'block';
+        Contenedor_vehiculo.style.height='33vh';
+        }
+      }
+
 
       capa_actual.features.forEach(feature => {
           const coords = feature.geometry.coordinates;
@@ -475,6 +490,7 @@ let capa_actual = gjson2025;
               if (tipoAcc) {
                 switch (tipoAcc) {
                   case "Caída de pasajero":
+                    
                   frecuencias_tipoAcc[0]++;
                   break;
                   case "Colisión con animal":
@@ -567,7 +583,28 @@ let capa_actual = gjson2025;
       chart_posible_causa.update();
 
       // tipo_accidente
-      chart_tipo_accidente.data.datasets[0].data = frecuencias_tipoAcc
+      const tipo_accidentes=["Caída de pasajero",
+        "Colisión con animal",
+         "Colisión con ciclista",
+         "Colisión con ferrocarril",
+         "Colisión con motocicleta",
+          "Colisión con objeto fijo",
+         "Colisión con peatón (atropellamiento)",
+         "Colisión con vehículo automotor",
+         "Incendio",
+         "Salida del camino",
+         
+         "Volcadura",
+         "Otro"
+       ]
+      const sortedData = frecuencias_tipoAcc
+        .map((value, index) => ({ value, index }))
+        .sort((a, b) => b.value - a.value);
+
+      const sortedValues = sortedData.map(item => item.value);
+      const sortedIndexes = sortedData.map(item => tipo_accidentes[item.index]);
+      chart_tipo_accidente.data.datasets[0].data = sortedValues
+      chart_tipo_accidente.data.labels = sortedIndexes;
       chart_tipo_accidente.options.plugins.title.text = `Distribución de accidentes por tipo (${anio})`;
       chart_tipo_accidente.update();
 
@@ -666,9 +703,6 @@ let capa_actual = gjson2025;
     });
 
 
-    setTimeout(() => {
-      actualizarGraficasBasadoEnFeaturesVisibles();
-    }, 2000);  
     // Actualizar cuando el zoom termine.
     map.on('zoomend', quitar_anadir_circulos);
     map.on('zoomend dragend', actualizarGraficasBasadoEnFeaturesVisibles);
