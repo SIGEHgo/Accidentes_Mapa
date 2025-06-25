@@ -1,3 +1,5 @@
+let chart_clase_accidente = null;
+let hist_clase_accidente = Array(3).fill(0);
 const plugin_actualizar_eleccion_cruzada_clase = [
   {
     id: "customEventListener",
@@ -13,10 +15,11 @@ const plugin_actualizar_eleccion_cruzada_clase = [
           const datasetIndex = points[0].datasetIndex; // Índice del dataset
           const index = points[0].index; // Índice de la barra clickeada
           let label = chart.data.labels[index]; // Obtener etiqueta de la barra
+          //console.log(label.slice(0, -3));
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
-              feature.properties.CLASE.includes(label) &
+              (feature.properties.CLASE === (label)) &
               bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
@@ -59,58 +62,32 @@ const plugin_actualizar_eleccion_cruzada_clase = [
     },
   },
 ];
-const clase_accidente = new Promise((resolve, reject) => {
-  fetch("Datos/Graficas/clase.csv")
-    .then((response) => response.text())
-    .then((data) => {
-      const filas = data.trim().split("\n");
-      const dia = [];
-      const frecuencia2021 = [];
-      const frecuencia2022 = [];
-      const frecuencia2023 = [];
-      const frecuencia2025 = [];
-
-      for (let i = 1; i < filas.length; i++) {
-        const columnas = filas[i].split(",");
-        if (columnas.length >= 5) {
-          dia.push(columnas[0].replace(/"/g, ""));
-          frecuencia2021.push(columnas[1]);
-          frecuencia2022.push(columnas[2]);
-          frecuencia2023.push(columnas[3]);
-          frecuencia2025.push(columnas[4]);
-        }
+promesa_primera_hora = new Promise((resolve, reject) => {
+  gjson2025.features.forEach((element) => {
+    if (element.properties.CLASE != null) {
+      if(element.properties.CLASE==="Sólo daños"){
+        hist_clase_accidente[0]+=1
       }
-      resolve({
-        dia,
-        frecuencia2021,
-        frecuencia2022,
-        frecuencia2023,
-        frecuencia2025,
-      });
-    });
+      if(element.properties.CLASE==="No fatal"){
+        hist_clase_accidente[1]+=1
+      }
+      if(element.properties.CLASE==="Fatal"){
+        hist_clase_accidente[2]+=1
+      }
+    }
+    resolve();
+  });
 });
-
-let frecuencias_clase_accidente = {};
-let chart_clase_accidente = null;
-
-clase_accidente.then(
-  ({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
-    frecuencias_clase_accidente = {
-      2021: frecuencia2021,
-      2022: frecuencia2022,
-      2023: frecuencia2023,
-      2025: frecuencia2025,
-    };
-
-    const ctx = document.getElementById("clase_accidente").getContext("2d");
+promesa_primera_hora.then(() => {
+ const ctx = document.getElementById("clase_accidente").getContext("2d");
     chart_clase_accidente = new Chart(ctx, {
       type: "pie",
       data: {
-        labels: dia,
+        labels: ["Sólo daños","No fatal","Fatal"],
         datasets: [
           {
             label: "Frecuencia",
-            data: frecuencias_clase_accidente["2025"],
+            data: hist_clase_accidente,
             backgroundColor: [
               "rgba(110, 172, 218,0.6)",
               "rgba(226, 226, 182,0.6)",

@@ -178,10 +178,18 @@ let capa_actual = gjson2025;
     }
 
     // Los heatmaps 
-    const heatLayer2021 = L.heatLayer(heatPoints_2021, { radius: 10, blur: 15, maxZoom: 1 });
-    const heatLayer2022 = L.heatLayer(heatPoints_2022, { radius: 10, blur: 15, maxZoom: 1 });
-    const heatLayer2023 = L.heatLayer(heatPoints_2023, { radius: 10, blur: 15, maxZoom: 1 });
-    const heatLayer2025 = L.heatLayer(heatPoints_2025, { radius: 10, blur: 15, maxZoom: 1 });
+    const heatLayer2021 = L.heatLayer(gjson2021.features.map((feat)=> {const coordinates=feat.geometry.coordinates;
+      return [coordinates[1], coordinates[0]];
+    }), { radius: 10, blur: 15, maxZoom: 1 });
+    const heatLayer2022 = L.heatLayer(gjson2022.features.map((feat)=> {const coordinates=feat.geometry.coordinates;
+      return [coordinates[1], coordinates[0]];
+    }), { radius: 10, blur: 15, maxZoom: 1 });
+    const heatLayer2023 = L.heatLayer(gjson2023.features.map((feat)=> {const coordinates=feat.geometry.coordinates;
+      return [coordinates[1], coordinates[0]];
+    }), { radius: 10, blur: 15, maxZoom: 1 });
+    const heatLayer2025 = L.heatLayer(gjson2025.features.map((feat)=> {const coordinates=feat.geometry.coordinates;
+      return [coordinates[1], coordinates[0]];
+    }), { radius: 10, blur: 15, maxZoom: 1 });
     
 
     // Crea GeoJSON para cada año
@@ -323,7 +331,7 @@ let capa_actual = gjson2025;
       const frecuencias_grupo_edad = Array(4).fill(0);
       const frecuencias_genero = Array(3).fill(0);
       const frecuencias_causaA = Array(5).fill(0);
-      const frecuencias_tipoAcc= Array(12).fill(0);
+      const frecuencias_tipoAcc= Array(13).fill(0);
       const vehiculos_conteo = Array(7).fill(0);
       //AUTOMOVIL BICICLETA CAMION CAMIONETA CAMPASAJ FERROCARRI MICROBUS MOTOCICLET OMNIBUS PASCAMION TRACTOR
     //   [1] "Caída de pasajero"                     "Colisión con animal"                   "Colisión con ciclista"                
@@ -489,42 +497,44 @@ let capa_actual = gjson2025;
               }
               if (tipoAcc) {
                 switch (tipoAcc) {
-                  case "Caída de pasajero":
-                    
+                  case "Colisión con objeto fijo":
                   frecuencias_tipoAcc[0]++;
                   break;
-                  case "Colisión con animal":
+                  case "Colisión con vehículo automotor":
                   frecuencias_tipoAcc[1]++;
                   break;
-                  case "Colisión con ciclista":
+                  case "Colisión con motocicleta":
                   frecuencias_tipoAcc[2]++;
                   break;
-                  case "Colisión con ferrocarril":
+                  case "Volcadura":
                   frecuencias_tipoAcc[3]++;
                   break;
-                  case "Colisión con motocicleta":
+                  case "Salida del camino":
                   frecuencias_tipoAcc[4]++;
                   break;
-                  case "Colisión con objeto fijo":
+                  case "Colisión con peatón (atropellamiento)":
                   frecuencias_tipoAcc[5]++;
                   break;
-                  case "Colisión con peatón (atropellamiento)":
+                  case "Colisión con ciclista":
                   frecuencias_tipoAcc[6]++;
                   break;
-                  case "Colisión con vehículo automotor":
+                  case "Otro":
                   frecuencias_tipoAcc[7]++;
                   break;
-                  case "Incendio":
+                  case "Colisión con ferrocarril":
                   frecuencias_tipoAcc[8]++;
                   break;
-                  case "Salida del camino":
+                  case "Colisión con animal":
                   frecuencias_tipoAcc[9]++;
                   break;
-                  case "Volcadura":
+                  case "Caída de pasajero":
                   frecuencias_tipoAcc[10]++;
                   break;
-                  default:
-                  frecuencias_tipoAcc[11]++; // "Otra"
+                  case "Incendio":
+                  frecuencias_tipoAcc[11]++;
+                  break;
+                  case "Colisión entre transporte público":
+                  frecuencias_tipoAcc[12]++;
                   break;
                 }
               }
@@ -583,20 +593,21 @@ let capa_actual = gjson2025;
       chart_posible_causa.update();
 
       // tipo_accidente
-      const tipo_accidentes=["Caída de pasajero",
-        "Colisión con animal",
-         "Colisión con ciclista",
-         "Colisión con ferrocarril",
-         "Colisión con motocicleta",
-          "Colisión con objeto fijo",
-         "Colisión con peatón (atropellamiento)",
-         "Colisión con vehículo automotor",
-         "Incendio",
-         "Salida del camino",
-         
-         "Volcadura",
-         "Otro"
-       ]
+      const tipo_accidentes=[
+      "Colisión con objeto fijo",
+      "Colisión con vehículo automotor",
+      "Colisión con motocicleta",
+      "Volcadura",
+      "Salida del camino",
+      "Colisión con peatón (atropellamiento)",
+      "Colisión con ciclista",
+      "Otro",
+      "Colisión con ferrocarril",
+      "Colisión con animal",
+      "Caída de pasajero",
+      "Incendio",
+      "Colisión entre transporte público"
+    ];
       const sortedData = frecuencias_tipoAcc
         .map((value, index) => ({ value, index }))
         .sort((a, b) => b.value - a.value);

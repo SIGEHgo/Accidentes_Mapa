@@ -1,3 +1,5 @@
+let chart_edad = null;
+let hist_edad = Array(4).fill(0);
 const plugin_actualizar_eleccion_cruzada_edad = [
   {
     id: "customEventListener",
@@ -16,54 +18,40 @@ const plugin_actualizar_eleccion_cruzada_edad = [
           //console.log(label);
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
-            if (
-              !bounds.contains(
+          
+          if((feature.properties.EDAD==="Se fugó " | feature.properties.EDAD==="Se ignora edad") & label==="Desconocido"){
+            return (
+              bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
                   feature.geometry.coordinates[0]
                 )
               )
-            ) {
-              return false;
-            } else {
-              const edad =
-                feature.properties.EDAD === "Se fugó" ||
-                feature.properties.EDAD === "Se ignora edad"
-                  ? "Se fugó"
-                  : parseInt(feature.properties.EDAD, 10);
-              if (
-                label === "15-29" &&
-                typeof edad === "number" &&
-                edad >= 15 &&
-                edad <= 29
-              ) {
-                return true;
-              } else if (
-                label === "30-59" &&
-                typeof edad === "number" &&
-                edad >= 30 &&
-                edad <= 59
-              ) {
-                return true;
-              } else if (
-                label === "60-99" &&
-                typeof edad === "number" &&
-                edad >= 60 &&
-                edad <= 98
-              ) {
-                return true;
-              } else if (
-                label === "Desconocido" &&
-                (edad === "Se fugó" ||
-                  typeof edad !== "number" ||
-                  edad < 15 ||
-                  edad > 98)
-              ) {
-                return true;
-              }
-              return false;
+            );
+          }else{
+            if(parseInt(feature.properties.EDAD)>=Number(label.slice(0,2)) & parseInt(feature.properties.EDAD)<=Number(label.slice(3,5))){
+              return (
+                bounds.contains(
+                  L.latLng(
+                    feature.geometry.coordinates[1],
+                    feature.geometry.coordinates[0]
+                  ) 
+                )
+              );
             }
+          }
           });
+          //console.log(Number(label.slice(3,5)))
+       
+              // ///TRY
+              // ((feature.properties.EDAD>=Number(label.slice(0,2)) && feature.properties.EDAD<=Number(label.slice(4,5))) ||
+              // ((feature.properties.EDAD==="Se fugó " || feature.properties.EDAD==="Se ignora edad") && label==="Desconocido")) & bounds.contains(
+              //   L.latLng(
+              //     feature.geometry.coordinates[1],
+              //     feature.geometry.coordinates[0]
+              //   )
+              
+              // ////
 
           array_ofMarkers.forEach((marker) => {
             const [lng, lat] = marker.geometry.coordinates;
@@ -98,58 +86,55 @@ const plugin_actualizar_eleccion_cruzada_edad = [
     },
   },
 ];
-const grupo_edad = new Promise((resolve, reject) => {
-  fetch("Datos/Graficas/grupo_edad.csv")
-    .then((response) => response.text())
-    .then((data) => {
-      const filas = data.trim().split("\n");
-      const dia = [];
-      const frecuencia2021 = [];
-      const frecuencia2022 = [];
-      const frecuencia2023 = [];
-      const frecuencia2025 = [];
-
-      for (let i = 1; i < filas.length; i++) {
-        const columnas = filas[i].split(",");
-        if (columnas.length >= 5) {
-          dia.push(columnas[0].replace(/"/g, ""));
-          frecuencia2021.push(columnas[1]);
-          frecuencia2022.push(columnas[2]);
-          frecuencia2023.push(columnas[3]);
-          frecuencia2025.push(columnas[4]);
+promesa_primera_edad = new Promise((resolve, reject) => {
+  gjson2025.features.forEach((feature) => {
+    if (feature.properties.EDAD != null) {
+      const edad =
+        feature.properties.EDAD === "Se fugó" ||
+        feature.properties.EDAD === "Se ignora edad"
+          ? "Se fugó"
+          : parseInt(feature.properties.EDAD, 10);
+        if(typeof(edad)===typeof("a")){
+          hist_edad[3]+=1
+        }else{
+          if (
+                typeof edad === "number" &&
+                edad >= 60 &&
+                edad <= 99
+              ){
+                hist_edad[2]+=1
+              }
+          if (
+                typeof edad === "number" &&
+                edad >= 30 &&
+                edad <= 59
+              ){
+                hist_edad[1]+=1
+              }
+          if (
+                typeof edad === "number" &&
+                edad >= 15 &&
+                edad <= 29
+              ){
+                hist_edad[0]+=1
+              }
         }
-      }
-      resolve({
-        dia,
-        frecuencia2021,
-        frecuencia2022,
-        frecuencia2023,
-        frecuencia2025,
-      });
-    });
+    }
+    
+  });
+  console.log(hist_edad)
+    resolve();
 });
-
-let frecuencias_grupo_edad = {};
-let chart_grupo_edad = null;
-
-grupo_edad.then(
-  ({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
-    frecuencias_grupo_edad = {
-      2021: frecuencia2021,
-      2022: frecuencia2022,
-      2023: frecuencia2023,
-      2025: frecuencia2025,
-    };
-
-    const ctx = document.getElementById("grupo_edad").getContext("2d");
+promesa_primera_edad.then(() => {
+const ctx = document.getElementById("grupo_edad").getContext("2d");
     chart_grupo_edad = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: dia,
+        labels: ["15-29","30-59","60-99","Desconocido"],
         datasets: [
           {
             label: "Frecuencia",
-            data: frecuencias_grupo_edad["2025"],
+            data: hist_edad,
             backgroundColor: [
               "rgba(255, 76, 76, 0.2)", // 15-29 años: Rojo vibrante
               "rgba(255, 195, 0,  0.2)", // 30-59 años: Amarillo fuerte
@@ -189,5 +174,4 @@ grupo_edad.then(
       },
       plugins: plugin_actualizar_eleccion_cruzada_edad,
     });
-  }
-);
+});
