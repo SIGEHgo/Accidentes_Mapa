@@ -1,3 +1,5 @@
+let chart_dia_semana = null;
+let hist_diasemana = Array(7).fill(0);
 const plugin_actualizar_eleccion_cruzada_diasemana = [
   {
     id: "customEventListener",
@@ -5,18 +7,19 @@ const plugin_actualizar_eleccion_cruzada_diasemana = [
       if (evt.event.type == "click") {
         const points = chart.getElementsAtEventForMode(
           evt.event,
-          "nearest",
-          { intersect: true },
+          "x",
+          { intersect: false },
           true
         );
         if (points.length > 0) {
           const datasetIndex = points[0].datasetIndex; // Índice del dataset
           const index = points[0].index; // Índice de la barra clickeada
           let label = chart.data.labels[index]; // Obtener etiqueta de la barra
+          //console.log(label.slice(0, -3));
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
-              feature.properties.DIASEMANA.includes(label) &
+              (feature.properties.DIASEMANA === (label)) &
               bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
@@ -59,57 +62,45 @@ const plugin_actualizar_eleccion_cruzada_diasemana = [
     },
   },
 ];
-const dia_semana_csv = new Promise((resolve, reject) => {
-  fetch("Datos/Graficas/dia_semana.csv")
-    .then((response) => response.text())
-    .then((data) => {
-      const filas = data.trim().split("\n");
-      const dia = [];
-      const frecuencia2021 = [];
-      const frecuencia2022 = [];
-      const frecuencia2023 = [];
-      const frecuencia2025 = [];
-
-      for (let i = 1; i < filas.length; i++) {
-        const columnas = filas[i].split(",");
-        if (columnas.length >= 5) {
-          dia.push(columnas[0].replace(/"/g, ""));
-          frecuencia2021.push(columnas[1]);
-          frecuencia2022.push(columnas[2]);
-          frecuencia2023.push(columnas[3]);
-          frecuencia2025.push(columnas[4]);
-        }
+promesa_primera_diasemana = new Promise((resolve, reject) => {
+  gjson2025.features.forEach((element) => {
+    if (element.properties.DIASEMANA != null) {
+      if (element.properties.DIASEMANA === "Lunes"){
+        hist_diasemana[0]+=1
       }
-      resolve({
-        dia,
-        frecuencia2021,
-        frecuencia2022,
-        frecuencia2023,
-        frecuencia2025,
-      });
-    });
+      if (element.properties.DIASEMANA === "Martes"){
+        hist_diasemana[1]+=1
+      }
+      if (element.properties.DIASEMANA === "Miércoles"){
+        hist_diasemana[2]+=1
+      }
+      if (element.properties.DIASEMANA === "Jueves"){
+        hist_diasemana[3]+=1
+      }
+      if (element.properties.DIASEMANA === "Viernes"){
+        hist_diasemana[4]+=1
+      }
+      if (element.properties.DIASEMANA === "Sábado"){
+        hist_diasemana[5]+=1
+      }
+      if (element.properties.DIASEMANA === "Domingo"){
+        hist_diasemana[6]+=1
+      }
+      }
+  });
+  console.log(hist_diasemana)
+  resolve();
 });
-
-let frecuencias_dia_semana = {};
-let chart_dia_semana = null;
-dia_semana_csv.then(
-  ({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
-    frecuencias_dia_semana = {
-      2021: frecuencia2021,
-      2022: frecuencia2022,
-      2023: frecuencia2023,
-      2025: frecuencia2025,
-    };
-
-    const ctx = document.getElementById("dia_semana").getContext("2d");
+promesa_primera_diasemana.then(() => {
+ const ctx = document.getElementById("dia_semana").getContext("2d");
     chart_dia_semana = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: dia,
+        labels: ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
         datasets: [
           {
             label: "Cantidad de accidentes",
-            data: frecuencias_dia_semana["2025"],
+            data: hist_diasemana,
             backgroundColor: [
               `rgba(100, 120, 150, 0.4)`, // Gris azulado
             ],

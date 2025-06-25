@@ -1,3 +1,5 @@
+let chart_posible_causa = null;
+let hist_posible_causa = Array(5).fill(0);
 const plugin_actualizar_eleccion_cruzada_causa = [
   {
     id: "customEventListener",
@@ -12,12 +14,12 @@ const plugin_actualizar_eleccion_cruzada_causa = [
         if (points.length > 0) {
           const datasetIndex = points[0].datasetIndex; // Índice del dataset
           const index = points[0].index; // Índice de la barra clickeada
-          const bounds = map.getBounds();
-
           let label = chart.data.labels[index]; // Obtener etiqueta de la barra
+          //console.log(label.slice(0, -3));
+          const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
-              feature.properties.CAUSAACCI.includes(label) &
+              (feature.properties.CAUSAACCI === (label)) &
               bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
@@ -26,6 +28,7 @@ const plugin_actualizar_eleccion_cruzada_causa = [
               )
             );
           });
+
           array_ofMarkers.forEach((marker) => {
             const [lng, lat] = marker.geometry.coordinates;
 
@@ -59,58 +62,49 @@ const plugin_actualizar_eleccion_cruzada_causa = [
     },
   },
 ];
-const posible_causa = new Promise((resolve, reject) => {
-  fetch("Datos/Graficas/posible_causa.csv")
-    .then((response) => response.text())
-    .then((data) => {
-      const filas = data.trim().split("\n");
-      const dia = [];
-      const frecuencia2021 = [];
-      const frecuencia2022 = [];
-      const frecuencia2023 = [];
-      const frecuencia2025 = [];
-
-      for (let i = 1; i < filas.length; i++) {
-        const columnas = filas[i].split(",");
-        if (columnas.length >= 5) {
-          dia.push(columnas[0].replace(/"/g, ""));
-          frecuencia2021.push(columnas[1]);
-          frecuencia2022.push(columnas[2]);
-          frecuencia2023.push(columnas[3]);
-          frecuencia2025.push(columnas[4]);
+promesa_primera_causa = new Promise((resolve, reject) => {
+  gjson2025.features.forEach((element) => {
+    
+    if (element.properties.CAUSAACCI != null) {
+      console.log(element.properties.CAUSAACCI)
+      if(element.properties.CAUSAACCI=="Conductor"){
+        //console.log("AAAAA")
+        hist_posible_causa[0]+=1
+        console.log(hist_posible_causa)
+      }else{
+        if(element.properties.CAUSAACCI==="Falla del vehículo"){
+          hist_posible_causa[1]+=1
+        }else{
+          if(element.properties.CAUSAACCI==="Mala condición del camino"){
+           hist_posible_causa[2]+=1
+          }else{
+            if(element.properties.CAUSAACCI==="Peatón o pasajero"){
+              hist_posible_causa[3]+=1
+            }else{
+              if(element.properties.CAUSAACCI==="Otra"){
+                hist_posible_causa[4]+=1
+              }
+            }
+          }
         }
       }
-      resolve({
-        dia,
-        frecuencia2021,
-        frecuencia2022,
-        frecuencia2023,
-        frecuencia2025,
-      });
-    });
+    }
+    else{console.log("f")}
+  });
+  console.log(hist_posible_causa)
+      resolve();
+
 });
-
-let frecuencias_posible_causa = {};
-let chart_posible_causa = null;
-
-posible_causa.then(
-  ({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
-    frecuencias_posible_causa = {
-      2021: frecuencia2021,
-      2022: frecuencia2022,
-      2023: frecuencia2023,
-      2025: frecuencia2025,
-    };
-
-    const ctx = document.getElementById("posible_causa").getContext("2d");
+promesa_primera_causa.then(() => {
+  const ctx = document.getElementById("posible_causa").getContext("2d");
     chart_posible_causa = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: dia,
+        labels: ["Conductor","Falla del vehículo","Mala condición del camino","Peatón o pasajero","Otra"],
         datasets: [
           {
             label: "Frecuencia",
-            data: frecuencias_posible_causa["2025"],
+            data: hist_posible_causa,
             backgroundColor: [
               `rgba(100, 120, 150, 0.4)`, // Gris azulado
               `rgba(0, 128, 80, 0.4)`, // Verde esmeralda

@@ -12,6 +12,7 @@ const meses_largos = {
   Nov: "Noviembre",
   Dic: "Diciembre",
 };
+let primeros_datos_meses=Array(12).fill(0);
 const plugin_actualizar_eleccion_cruzada_mes = [
   {
     id: "customEventListener",
@@ -24,9 +25,9 @@ const plugin_actualizar_eleccion_cruzada_mes = [
           true
         );
         if (points.length > 0) {
-          const datasetIndex = points[0].datasetIndex; // Índice del dataset
-          const index = points[0].index; // Índice de la barra clickeada
-          let label = chart.data.labels[index]; // Obtener etiqueta de la barra
+          const datasetIndex = points[0].datasetIndex; 
+          const index = points[0].index; 
+          let label = chart.data.labels[index]; 
           console.log(label);
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
@@ -75,49 +76,56 @@ const plugin_actualizar_eleccion_cruzada_mes = [
     },
   },
 ];
-const accidentes_por_mes = new Promise((resolve, reject) => {
-  fetch("Datos/Graficas/accidentes_por_mes.csv")
-    .then((response) => response.text())
-    .then((data) => {
-      const filas = data.trim().split("\n");
-      const dia = [];
-      const frecuencia2021 = [];
-      const frecuencia2022 = [];
-      const frecuencia2023 = [];
-      const frecuencia2025 = [];
+// const accidentes_por_mes = new Promise((resolve, reject) => {
+//   fetch("Datos/Graficas/accidentes_por_mes.csv")
+//     .then((response) => response.text())
+//     .then((data) => {
+//       const filas = data.trim().split("\n");
+//       const dia = [];
+//       const frecuencia2021 = [];
+//       const frecuencia2022 = [];
+//       const frecuencia2023 = [];
+//       const frecuencia2025 = [];
 
-      for (let i = 1; i < filas.length; i++) {
-        const columnas = filas[i].split(",");
-        if (columnas.length >= 5) {
-          dia.push(columnas[0].replace(/"/g, ""));
-          frecuencia2021.push(columnas[1]);
-          frecuencia2022.push(columnas[2]);
-          frecuencia2023.push(columnas[3]);
-          frecuencia2025.push(columnas[4]);
-        }
-      }
-      resolve({
-        dia,
-        frecuencia2021,
-        frecuencia2022,
-        frecuencia2023,
-        frecuencia2025,
-      });
-    });
-});
+//       for (let i = 1; i < filas.length; i++) {
+//         const columnas = filas[i].split(",");
+//         if (columnas.length >= 5) {
+//           dia.push(columnas[0].replace(/"/g, ""));
+//           frecuencia2021.push(columnas[1]);
+//           frecuencia2022.push(columnas[2]);
+//           frecuencia2023.push(columnas[3]);
+//           frecuencia2025.push(columnas[4]);
+//         }
+//       }
+//       resolve({
+//         dia,
+//         frecuencia2021,
+//         frecuencia2022,
+//         frecuencia2023,
+//         frecuencia2025,
+//       });
+//     });
+// });
+const accidentes_por_mes = new Promise((resolve, reject) => {
+  gjson2025.features.forEach((element) => {
+    console.log(element.properties.MES)
+    if (element.properties.MES != null) {
+      
+      primeros_datos_meses[parseInt(element.properties.MES)-1] += 1;
+    }
+    
+  });
+  console.log(primeros_datos_meses);
+  resolve();
+})
+
+
 
 let frecuencias_accidentes_mes = {};
 let chart_accidentes_por_mes = null;
 
 accidentes_por_mes.then(
-  ({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
-    frecuencias_accidentes_mes = {
-      2021: frecuencia2021,
-      2022: frecuencia2022,
-      2023: frecuencia2023,
-      2025: frecuencia2025,
-    };
-
+  () => {
     const ctx = document.getElementById("accidentes_mes").getContext("2d");
     chart_accidentes_por_mes = new Chart(ctx, {
       type: "line",
@@ -138,38 +146,37 @@ accidentes_por_mes.then(
         ],
         datasets: [
           {
-            label: "Número de accidentes", // Nombre del dataset
-            data: frecuencias_accidentes_mes["2025"],
-            backgroundColor: "rgba(102, 188, 125, 0.4)", // color del área bajo la línea
-            borderColor: "rgba(102, 188, 125, 0.4)", // color de la línea
+            label: "Número de accidentes", 
+            data: primeros_datos_meses,
+            backgroundColor: "rgba(102, 188, 125, 0.4)", 
+            borderColor: "rgba(102, 188, 125, 0.4)", 
             pointBackgroundColor: "white",
             pointBorderColor: "rgb(102, 188, 125)",
-            pointHoverBackgroundColor: "rgba(255, 99, 132, 1)", // resalta el punto en hover
-            tension: 0.3, // suaviza las curvas
+            pointHoverBackgroundColor: "rgba(255, 99, 132, 1)", 
+            tension: 0.3, 
             fill: true,
           },
         ],
       },
       options: {
-        responsive: true, // Hace que la gráfica sea responsiva
-        maintainAspectRatio: false, // Mantiene la relación de aspecto
+        responsive: true,
+        maintainAspectRatio: false, 
         plugins: {
           tooltip: {
-            enabled: true, // Aparece cuando pasas el mouse encima de un punto
+            enabled: true, 
             callbacks: {
-              // <-- AQUI AÑADIMOS LA PERSONALIZACION
               title: function (tooltipItems) {
                 const mes_corto = tooltipItems[0].label;
-                return meses_largos[mes_corto] || mes_corto; // Si no encuentra, deja el mismo label
+                return meses_largos[mes_corto] || mes_corto; 
               },
             },
           },
           datalabels: {
-            anchor: "end", // Posición de las etiquetas: al final (arriba) del punto
-            align: "top", // Alineación: encima del punto
-            color: "#333", // Color del texto de las etiquetas
+            anchor: "end", 
+            align: "top", 
+            color: "#333",
             font: {
-              weight: "bold", // Hace que el texto de las etiquetas esté en negritas
+              weight: "bold", 
             },
           },
           title: {
@@ -177,14 +184,14 @@ accidentes_por_mes.then(
             text: "Número de accidentes por mes (2025)",
           },
           legend: {
-            display: false, // Quitar el pequeño cuadro para desactivar grafica
+            display: false, 
           },
         },
         scales: {
           y: {
-            beginAtZero: true, // Hace que el eje Y comience en 0 para no cortar los datos
+            beginAtZero: true, 
             ticks: {
-              stepSize: 1, // Asegura que solo se muestren valores enteros
+              stepSize: 1, 
               callback: function (value) {
                 return Number.isInteger(value) ? value : null; // Solo muestra valores enteros
               },
@@ -192,8 +199,8 @@ accidentes_por_mes.then(
           },
         },
         animation: {
-          duration: 1500, // Duración de la animación (en milisegundos)
-          easing: "easeOutQuart", // Tipo de animación: más suave y elegante
+          duration: 1500, 
+          easing: "easeOutQuart", 
         },
       },
       plugins: plugin_actualizar_eleccion_cruzada_mes,

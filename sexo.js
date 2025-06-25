@@ -1,3 +1,5 @@
+let chart_sexo = null;
+let hist_genero = Array(3).fill(0);
 const plugin_actualizar_eleccion_cruzada_genero = [
   {
     id: "customEventListener",
@@ -13,27 +15,19 @@ const plugin_actualizar_eleccion_cruzada_genero = [
           const datasetIndex = points[0].datasetIndex; // Índice del dataset
           const index = points[0].index; // Índice de la barra clickeada
           let label = chart.data.labels[index]; // Obtener etiqueta de la barra
+          //console.log(label)
+          //console.log(label.slice(0, -3));
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
-            if (
-              !bounds.contains(
+            return (
+              (feature.properties.SEXO === (label)) &
+              bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
                   feature.geometry.coordinates[0]
                 )
               )
-            ) {
-              return false;
-            } else {
-              if (label === "Hombre" || label === "Mujer") {
-                return feature.properties.SEXO === label;
-              } else {
-                return (
-                  feature.properties.SEXO !== "Hombre" &&
-                  feature.properties.SEXO !== "Mujer"
-                );
-              }
-            }
+            );
           });
 
           array_ofMarkers.forEach((marker) => {
@@ -69,58 +63,34 @@ const plugin_actualizar_eleccion_cruzada_genero = [
     },
   },
 ];
-const sexo = new Promise((resolve, reject) => {
-  fetch("Datos/Graficas/sexo.csv")
-    .then((response) => response.text())
-    .then((data) => {
-      const filas = data.trim().split("\n");
-      const dia = [];
-      const frecuencia2021 = [];
-      const frecuencia2022 = [];
-      const frecuencia2023 = [];
-      const frecuencia2025 = [];
-
-      for (let i = 1; i < filas.length; i++) {
-        const columnas = filas[i].split(",");
-        if (columnas.length >= 5) {
-          dia.push(columnas[0].replace(/"/g, ""));
-          frecuencia2021.push(columnas[1]);
-          frecuencia2022.push(columnas[2]);
-          frecuencia2023.push(columnas[3]);
-          frecuencia2025.push(columnas[4]);
+promesa_primera_genero = new Promise((resolve, reject) => {
+  gjson2025.features.forEach((feature) => {
+    if (feature.properties.SEXO != null) {
+        if(feature.properties.SEXO==="Hombre"){
+          hist_genero[0]+=1
+        }else{
+          if (feature.properties.SEXO==="Mujer"){
+                hist_genero[1]+=1
+          }
+          if (feature.properties.SEXO==="Se fugó"){
+                hist_genero[2]+=1
+          }
         }
-      }
-      resolve({
-        dia,
-        frecuencia2021,
-        frecuencia2022,
-        frecuencia2023,
-        frecuencia2025,
-      });
-    });
+    }
+  });
+  console.log(hist_genero)
+  resolve();
 });
-
-let frecuencias_sexo = {};
-let chart_sexo = null;
-
-sexo.then(
-  ({ dia, frecuencia2021, frecuencia2022, frecuencia2023, frecuencia2025 }) => {
-    frecuencias_sexo = {
-      2021: frecuencia2021,
-      2022: frecuencia2022,
-      2023: frecuencia2023,
-      2025: frecuencia2025,
-    };
-
-    const ctx = document.getElementById("sexo").getContext("2d");
+promesa_primera_genero.then(() => {
+ const ctx = document.getElementById("sexo").getContext("2d");
     chart_sexo = new Chart(ctx, {
       type: "pie",
       data: {
-        labels: dia,
+        labels: ["Hombre","Mujer","Se fugó"],
         datasets: [
           {
             label: "Accidentados",
-            data: frecuencias_sexo["2025"],
+            data: hist_genero,
             backgroundColor: [
               "rgba(255, 76, 76, 0.4)", // 15-29 años: Rojo vibrante
               "rgba(255, 195, 0,  0.3)", // 30-59 años: Amarillo fuerte

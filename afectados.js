@@ -7,7 +7,7 @@ const plugin_actualizar_eleccion_cruzada_afectados = [
         const points = chart.getElementsAtEventForMode(
           evt.event,
           "nearest",
-          { intersect: true },
+          { intersect: false },
           true
         );
         if (points.length > 0) {
