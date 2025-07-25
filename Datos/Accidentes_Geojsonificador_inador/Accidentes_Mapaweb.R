@@ -103,7 +103,7 @@ tabla = DatosF |> dplyr::select(ID,TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTO
                                 PEATMUE,CICLMUE,OTROMUE,CONDHER,PASAHER,PEATONH,CICLHER,OTROHER,TOT_MUERT,TOT_HER) |>
   dplyr::arrange(ANIO, MES, DIA, HORA, MINUTOS)
 
-colnames(tabla) = c("ID","TIPACCID", "CLASE", "ANIO", "MES", "DIA", "HORA", "MINUTOS", "EDO", 
+colnames(tabla) = c("ID","TIPACCID", "CLASE", "ANIO,", "MES", "DIA", "HORA", "MINUTOS", "EDO", 
                     "NOM_MUN", "SEXO", "EDAD", "CAUSAACCI", "DIASEMANA" ,
                     "CONDMUE","PASAMUE","PEATMUE","CICLMUE","OTROMUE","CONDHER","PASAHER","PEATONH",
                     "CICLHER","OTROHER","TOT_MUERT","TOT_HER","geometry")

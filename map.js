@@ -83,7 +83,7 @@ let capa_actual = gjson2025;
         if (edadInvalida.includes(edad)) {
             responsable = `${p.SEXO}`;
         } else {
-            responsable = `${p.SEXO} de ${edad} años`;
+            responsable = `${p.SEXO} de ${parseInt(edad)} años`;
         }
 
       let fecha_actualizacion;
