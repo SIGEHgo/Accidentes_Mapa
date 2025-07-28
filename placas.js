@@ -1,13 +1,13 @@
-let chart_posible_causa = null;
-let hist_posible_causa = Array(5).fill(0);
-const plugin_actualizar_eleccion_cruzada_causa = [
+let chart_placas = null;
+let hist_placas = Array(7).fill(0);
+const plugin_actualizar_eleccion_cruzada_placas = [
   {
     id: "customEventListener",
     afterEvent: (chart, evt) => {
       if (evt.event.type == "click") {
         const points = chart.getElementsAtEventForMode(
           evt.event,
-          "y",
+          "x",
           { intersect: false },
           true
         );
@@ -15,11 +15,10 @@ const plugin_actualizar_eleccion_cruzada_causa = [
           const datasetIndex = points[0].datasetIndex; // Índice del dataset
           const index = points[0].index; // Índice de la barra clickeada
           let label = chart.data.labels[index]; // Obtener etiqueta de la barra
-          //console.log(label.slice(0, -3));
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
-              (feature.properties.CAUSAACCI === (label)) &
+              (feature.properties.PLACAS === (label)) &&
               bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
@@ -62,52 +61,48 @@ const plugin_actualizar_eleccion_cruzada_causa = [
     },
   },
 ];
-promesa_primera_causa = new Promise((resolve, reject) => {
+promesa_primera_placas = new Promise((resolve, reject) => {
   gjson2025.features.forEach((element) => {
-    
-    if (element.properties.CAUSAACCI != null) {
-      if(element.properties.CAUSAACCI=="Conductor"){
-        //console.log("AAAAA")
-        hist_posible_causa[0]+=1
-      }else{
-        if(element.properties.CAUSAACCI==="Falla del vehículo"){
-          hist_posible_causa[1]+=1
-        }else{
-          if(element.properties.CAUSAACCI==="Mala condición del camino"){
-           hist_posible_causa[2]+=1
-          }else{
-            if(element.properties.CAUSAACCI==="Peatón o pasajero"){
-              hist_posible_causa[3]+=1
-            }else{
-              if(element.properties.CAUSAACCI==="Otra"){
-                hist_posible_causa[4]+=1
-              }
-            }
-          }
-        }
+    if (element.properties.PLACAS != null) {
+      if (element.properties.PLACAS === "A51392K"){
+        hist_placas[0]+=1
       }
-    }
-    else{}
+      if (element.properties.PLACAS === "A52579K"){
+        hist_placas[1]+=1
+      }
+      if (element.properties.PLACAS === "A55434K"){
+        hist_placas[2]+=1
+      }
+      if (element.properties.PLACAS === "A55543K"){
+        hist_placas[3]+=1
+      }
+      if (element.properties.PLACAS === "A56032K"){
+        hist_placas[4]+=1
+      }
+      if (element.properties.PLACAS === "A56215K"){
+        hist_placas[5]+=1
+      }
+      if (element.properties.PLACAS === "A56263K"){
+        hist_placas[6]+=1
+      }
+      }
   });
-      resolve();
-
+  resolve();
+    console.log(hist_placas);
 });
-promesa_primera_causa.then(() => {
-  const ctx = document.getElementById("posible_causa").getContext("2d");
-    chart_posible_causa = new Chart(ctx, {
+
+promesa_primera_placas.then(() => {
+ const ctx = document.getElementById("placas").getContext("2d");
+    chart_placas = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["Conductor","Falla del vehículo","Mala condición del camino","Peatón o pasajero","Otra"],
+        labels: ["A51392K","A52579K","A55434K","A55543K","A56032K","A56215K","A56263K"],
         datasets: [
           {
-            label: "Frecuencia",
-            data: hist_posible_causa,
+            label: "Placas",
+            data: hist_placas,
             backgroundColor: [
               `rgba(100, 120, 150, 0.4)`, // Gris azulado
-              `rgba(0, 128, 80, 0.4)`, // Verde esmeralda
-              `rgba(255, 223, 70, 0.4)`, // Amarillo
-              `rgba(255, 140, 0, 0.4)`, // Naranja
-              `rgba(255, 99, 71, 0.4)`, // Rojo coral
             ],
             borderColor: "rgb(75, 192, 192)",
             borderWidth: 1,
@@ -115,33 +110,34 @@ promesa_primera_causa.then(() => {
         ],
       },
       options: {
-        indexAxis: "y",
+        indexAxis: "x",
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           title: {
             display: true,
-            text: "Posible causa del accidente (2025)",
+            text: "Placas (2025)",
           },
           legend: {
             display: false,
           },
         },
-        animation: {
-          duration: 1500,
-          easing: "easeOutCubic",
-        },
         scales: {
-          x: {
+          y: {
             ticks: {
+              stepSize: 1, // Ensure only integer values
               callback: function (value) {
-                return Number.isInteger(value) ? value : "";
+                return Number.isInteger(value) ? value : null;
               },
             },
           },
         },
+        animation: {
+          duration: 1500, // 1 segundo de animación
+          easing: "easeOutCubic", // animación más fluida
+        },
       },
-      plugins: plugin_actualizar_eleccion_cruzada_causa,
+      plugins: plugin_actualizar_eleccion_cruzada_placas,
     });
   }
 );

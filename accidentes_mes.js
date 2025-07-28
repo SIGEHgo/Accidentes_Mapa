@@ -28,7 +28,6 @@ const plugin_actualizar_eleccion_cruzada_mes = [
           const datasetIndex = points[0].datasetIndex; 
           const index = points[0].index; 
           let label = chart.data.labels[index]; 
-          console.log(label);
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
@@ -108,14 +107,11 @@ const plugin_actualizar_eleccion_cruzada_mes = [
 // });
 const accidentes_por_mes = new Promise((resolve, reject) => {
   gjson2025.features.forEach((element) => {
-    console.log(element.properties.MES)
     if (element.properties.MES != null) {
-      
       primeros_datos_meses[parseInt(element.properties.MES)-1] += 1;
     }
     
   });
-  console.log(primeros_datos_meses);
   resolve();
 })
 

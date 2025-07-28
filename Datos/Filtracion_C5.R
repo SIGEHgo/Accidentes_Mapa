@@ -1,4 +1,4 @@
-datos = readxl::read_excel("Datos/Sin filtrar/SINIESTRALIDAD 2025.xlsx")
+datos = readxl::read_excel("Datos/Sin filtrar/2025_C5/SINIESTRALIDAD 2025.xlsx")
 
 
 names(datos)
@@ -85,6 +85,7 @@ datos$NOM_CON |>  unique()
 datos$RUTA |>  unique()
 
 
+## Limpieza de ID_Oper, NOM_OPER, Placas, NOM_CON, Ruta
 datos = datos |> 
   dplyr::mutate(ID_OPER = stringr::str_squish(ID_OPER),
                 ID_OPER = gsub(pattern = " ", replacement = "", ID_OPER),
@@ -110,33 +111,56 @@ datos = datos |>
                 RUTA = gsub(pattern = " /", replacement = "/", x = RUTA),
                 RUTA = stringr::str_squish(RUTA))
 
+# Ya homologados corregimos detalles
+
+datos = datos |> 
+  dplyr::mutate(ID_OPER = gsub(pattern = "/", replacement = " / ", x = ID_OPER),
+                ID_OPER = gsub(pattern = "S / D", replacement = "S/D", x = ID_OPER),
+                ID_OPER = gsub(pattern = "\\.0$", replacement = "", x = ID_OPER),
+                
+                NOM_OPER = gsub(pattern = "/", replacement = " / ", x = NOM_OPER),
+                NOM_OPER = gsub(pattern = "S / D", replacement = "S/D", x = NOM_OPER),
+                
+                PLACAS = gsub(pattern = "/", replacement = " / ", x = PLACAS),
+                PLACAS = gsub(pattern = "S / D", replacement = "S/D", x = PLACAS),
+                
+                NOM_CON = gsub(pattern = "/", replacement = " / ", x = NOM_CON),
+                NOM_CON = gsub(pattern = "S / D", replacement = "S/D", x = NOM_CON),
+                
+                RUTA = gsub(pattern = "/", replacement = " / ", x = RUTA),
+                RUTA = gsub(pattern = "S / D", replacement = "S/D", x = RUTA)
+                )
+                
+
+
 #### Limpieza de coordenadas
 datos = datos |> 
   dplyr::mutate(LATITUD = gsub(pattern = "\n", replacement = "", x = LATITUD),
-                LATITUD = gsub(pattern = ",", replacement = "", x = LATITUD),
+                LATITUD = gsub(pattern = ",", replacement = ".", x = LATITUD),
                 LATITUD = stringr::str_squish(LATITUD),
                 LATITUD = as.numeric(LATITUD),
                 LONGITUD = gsub(pattern = "\n", replacement = "", x = LONGITUD),
-                LONGITUD = gsub(pattern = ",", replacement = "", x = LONGITUD),
+                LONGITUD = gsub(pattern = ",", replacement = ".", x = LONGITUD),
                 LONGITUD = stringr::str_squish(LONGITUD),
                 LONGITUD = as.numeric(LONGITUD))
 
 
 #### Crear GEOJSON
-mun = sf::read_sf("../../../Importantes_documentos_usar/Municipios/municipiosjair.shp")
+mun = sf::read_sf("../../Importantes_documentos_usar/Municipios/municipiosjair.shp")
 
 datos = datos |> 
   dplyr::arrange(ANIO,MES,DIA,HORA,MINUTOS) |> 
   sf::st_as_sf(coords = c("LONGITUD", "LATITUD"), crs = sf::st_crs(x = mun))
 
-tabla = datos |> 
-  dplyr::select(
-    ID_OPER, TIPACCID, CLASE, ANIO, MES, DIA, HORA, MINUTOS, EDO, 
-    NOM_MUN, SEXO, EDAD, CAUSAACCI, DIASEMANA, 
-    CONDMUE, PASAMUE, PEATMUR, CICLMUE, OTROMUE,
-    CONDHER, PASAHER, PEATONH, CICLHER, OTROHER,
-    TOT_MUERT, TOT_HER
-  )
 
-sf::st_write(tabla, "Datos/Filtrados/2025_C5/2025_prueba.geojson", driver = "GeoJSON", rewrite=TRUE)
 sf::st_write(datos, "Datos/Filtrados/2025_C5/2025.geojson", driver = "GeoJSON", rewrite=TRUE)
+
+
+### Verificar si alguno esta fuera
+dentro = sf::st_intersects(x = mun, y = datos)
+dentro = dentro |>  unlist()
+
+afuera = datos[-dentro,]
+datos_dentro = datos[-which(datos$NUM %in% afuera$NUM),]
+
+sf::st_write(datos_dentro, "Datos/Filtrados/2025_C5/2025_dentro", driver = "GeoJSON", rewrite=TRUE)

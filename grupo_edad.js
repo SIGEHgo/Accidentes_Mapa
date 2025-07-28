@@ -122,7 +122,6 @@ promesa_primera_edad = new Promise((resolve, reject) => {
     }
     
   });
-  console.log(hist_edad)
     resolve();
 });
 promesa_primera_edad.then(() => {

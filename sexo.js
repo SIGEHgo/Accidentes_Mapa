@@ -15,8 +15,6 @@ const plugin_actualizar_eleccion_cruzada_genero = [
           const datasetIndex = points[0].datasetIndex; // Índice del dataset
           const index = points[0].index; // Índice de la barra clickeada
           let label = chart.data.labels[index]; // Obtener etiqueta de la barra
-          //console.log(label)
-          //console.log(label.slice(0, -3));
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
@@ -78,7 +76,6 @@ promesa_primera_genero = new Promise((resolve, reject) => {
         }
     }
   });
-  console.log(hist_genero)
   resolve();
 });
 promesa_primera_genero.then(() => {
@@ -92,9 +89,9 @@ promesa_primera_genero.then(() => {
             label: "Accidentados",
             data: hist_genero,
             backgroundColor: [
+              "rgba(0, 123, 255,  0.3)",
               "rgba(255, 76, 76, 0.4)", // 15-29 años: Rojo vibrante
               "rgba(255, 195, 0,  0.3)", // 30-59 años: Amarillo fuerte
-              "rgba(0, 123, 255,  0.3)", // 60-99 años: Azul fuerte
               "rgba(108, 117, 125,  0.1)", // Desconocido: Gris oscuro
             ],
             borderColor: "#ffffff",

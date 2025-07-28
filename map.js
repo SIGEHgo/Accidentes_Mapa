@@ -111,59 +111,108 @@ let capa_actual = gjson2025;
           vehiculos[tipo] = cantidad;
         }
       }
+
+      // Empezamos a crear las tarjetas del popup
       const saldoHtml = `
-      <a href="#" class="notification" style="margin-left:0vw; text-align: center; display: inline-block; vertical-align: top;">
-        <img src="imagenes/Muerto.png" alt="Muertos" style="vertical-align: middle;width: 100%; max-width: 50px; border: 1px solid #ddd; border-radius: 8px;">
-        <span class="badge" style='right: -20px;'>${p.TOT_MUERT}</span>
-        <div style="margin-top: 5px; font-size: 0.8em; color: #333; min-height: 1.2em;">${p.CONDMUE ? (p.CONDMUE > 1 ? p.CONDMUE + ' conductores' : p.CONDMUE + ' conductor') : '&nbsp;'}</div>
-      </a>
-      <a href="#" class="notification" style="margin-left:5vw; text-align: center; display: inline-block; vertical-align: top;">
-        <img src="imagenes/Herido.png" alt="Heridos" style="vertical-align: middle;width: 100%; max-width: 50px; border: 1px solid #ddd; border-radius: 8px;">
-        <span class="badge" style='right: -20px;'>${p.TOT_HER}</span>
-        <div style="margin-top: 5px; font-size: 0.8em; color: #333; min-height: 1.2em;">${p.CONDHER ? (p.CONDHER > 1 ? p.CONDHER + ' conductores' : p.CONDHER + ' conductor') : '&nbsp;'}</div>
-      </a>
+        <div style="display: flex; justify-content: center; gap: 40px;">
+          <div style="text-align: center;">
+            <div style="position: relative; display: inline-block;">
+              <img src="imagenes/Iconos/Muerto.png" alt="Muertos" style="width: 80px; height: 110px; border: 1px solid #ddd; border-radius: 8px;">
+              <span class="badge" style="position: absolute; top: -10px; right: -10px; background: #600; color: white; border-radius: 50%; padding: 3px 8px; font-size: 12px;">${p.TOT_MUERT}</span>
+            </div>
+            <div style="margin-top: 5px; font-size: 0.3em; color: #333; min-height: 1.2em;">
+              ${p.CONDMUE ? (p.CONDMUE > 1 ? p.CONDMUE + ' conductores' : p.CONDMUE + ' conductor') : '&nbsp;'}
+            </div>
+          </div>
+
+          <div style="text-align: center;">
+            <div style="position: relative; display: inline-block;">
+              <img src="imagenes/Iconos/herido.png" alt="Heridos" style="width: 80px; height: 110px; border: 1px solid #ddd; border-radius: 8px;">
+              <span class="badge" style="position: absolute; top: -10px; right: -10px; background: #600; color: white; border-radius: 50%; padding: 3px 8px; font-size: 12px;">${p.TOT_HER}</span>
+            </div>
+            <div style="margin-top: 5px; font-size: 0.3em; color: #333; min-height: 1.2em;">
+              ${p.CONDHER ? (p.CONDHER > 1 ? p.CONDHER + ' conductores' : p.CONDHER + ' conductor') : '&nbsp;'}
+            </div>
+          </div>
+        </div>
       `;
       const vehiculosHtml = Object.entries(vehiculos)
         .map(([tipo, cantidad]) => `
           <a href="#" class="notification">
-        <img src="imagenes/${tipo}.png" alt="${tipo}" style="vertical-align: middle;width: 100%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px;">
+        <img src="imagenes/Iconos/${tipo}.png" alt="${tipo}" style="vertical-align: middle;width: 100%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px;">
         <span class="badge" style=''>${cantidad}</span>
           </a>
         `)
         .join('');
-      const texto_final=p.ANIO==
-      2025.0? 
-          saldoHtml: 
-          vehiculosHtml;
-      const titulo_final=p.ANIO==2025.0? 
-          `<h3 style="margin-top: 0.5vh;margin-bottom: 1vh;">Personas involucradas</h3>`:
-          `<h3 style="margin-top: 0.5vh;margin-bottom: 1vh;">Vehículos involucrados</h3>`;
-          vehiculosHtml;
-      const generoHtml = `
-        <a href="#" class="">
-          <img src="${p.SEXO === 'Hombre' ? 'imagenes/hombre_2.png' : (p.SEXO === 'Mujer' ? 'imagenes/mujer_2.png' : 'imagenes/desconocido.png')}" alt="Gender" style="width: 50%; max-width: 120px; border: 1px solid #ddd; border-radius: 8px; background-color: transparent;">
-        </a>
-      `;
+        
+
+
+
       
+      // const html = `
+      //   <div class="card" style="margin-top: 24px;">
+      //     <div style="border-radius: 8px 8px 0px 0px;height: 3vh;padding: 0px;margin: -4px -16px; background-color: #000000;"></div>
+      //     ${titulo_final}
+      //     ${texto_final}
+      //       <div class="info" style="display: flex; justify-content: space-between; text-align: left;">
+      //         <div style="width: 50%;">
+      //         <span><strong>${p.TIPACCID} – ${p.CLASE} </strong> </span>
+      //         <span style="padding-top: 10px;"> ${fecha_actualizacion}</span>
+      //         <span style="padding-top: 10px;">${p.NOM_MUN}, Hidalgo</span>
+      //         </div>
+      //         <div style="width: 40%; text-align: center;">
+      //             ${generoHtml}
+      //           <span> <strong>Posible causa:</strong> ${p.CAUSAACCI} </span>
+      //           <span Responsable:</strong> ${responsable} </span>
+      //         </div>
+      //       </div>
+      //   </div>
+      // `;
+
       const html = `
-        <div class="card" style="margin-top: 24px;">
-          <div style="border-radius: 8px 8px 0px 0px;height: 3vh;padding: 0px;margin: -4px -16px; background-color: #000000;"></div>
-          ${titulo_final}
-          ${texto_final}
-            <div class="info" style="display: flex; justify-content: space-between; text-align: left;">
-              <div style="width: 50%;">
-              <span><strong>${p.TIPACCID} – ${p.CLASE} </strong> </span>
-              <span style="padding-top: 10px;"> ${fecha_actualizacion}</span>
-              <span style="padding-top: 10px;">${p.NOM_MUN}, Hidalgo</span>
-              </div>
-              <div style="width: 40%; text-align: center;">
-                  ${generoHtml}
-                <span> <strong>Posible causa:</strong> ${p.CAUSAACCI} </span>
-                <span Responsable:</strong> ${responsable} </span>
-              </div>
+        <div class="container" style="border: 6px solid #e60000; padding: 20px; width: 400px; text-align: center; font-family: Arial, sans-serif; background-color: white;">
+          <div class="header" style="background-color: #e60000; color: white; font-weight: bold; padding: 10px; margin-bottom: 10px;">
+            ${p.ANIO == 2025 ? 'PERSONAS INVOLUCRADAS' : 'VEHÍCULOS INVOLUCRADOS'}
+          </div>
+
+          <div class="icon" style="width: 100px; margin: 0 auto 10px;">
+            ${p.ANIO == 2025 ? saldoHtml : vehiculosHtml}
+          </div>
+
+          <div class="sub-header" style="background-color: #e60000; color: white; font-weight: bold; padding: 10px; margin-bottom: 10px;">
+            ${p.TIPACCID} - ${p.CLASE}
+          </div>
+
+          <div class="informacion" style="display: flex; margin-top: 0px; height: 160px;">
+            <div class="izquierda" style="width: 20%; height: 100%;">
+              <img src="${
+                p.SEXO === 'Hombre'
+                  ? 'imagenes/Iconos/hombre.png'
+                  : p.SEXO === 'Mujer'
+                  ? 'imagenes/Iconos/mujer.png'
+                  : 'imagenes/Iconos/desconocido.png'
+              }" height="100%">
             </div>
+            <div class="derecha" style="width: 80%; text-align: left; padding-left: 10px;">
+              <div class="cause" style="font-weight: bold; color: #ff0000; font-size: 18px;">Posible causa:</div>
+              <div class="details" style="font-size: 17px; margin-bottom: 10px;">
+                ${responsable}
+              </div>
+              <div class="id_conductor" style="font-size: 16px; margin-bottom: 10px;"><strong>ID Operador:</strong> ${p.ID_OPER || 'No hay dato'}</div>
+              <div class="placas" style="font-size: 16px; margin-bottom: 10px;"><strong>Placa:</strong> ${p.PLACAS || 'No hay dato'}</div>
+              <div class="ruta" style="font-size: 16px; margin-bottom: 10px;"><strong>Ruta:</strong> ${p.RUTA || 'No hay dato'}</div>
+              <div class="date-time" style="font-size: 16px; margin-bottom: 10px;"><strong>Fecha:</strong>   ${fecha_actualizacion} </div>
+            </div>
+          </div>
+
+          <div class="location" style="font-size: 20px; margin-top: 20px; border-top: 4px solid #e60000; padding-top: 10px; font-weight: bold;">
+            ${p.NOM_MUN || 'Municipio desconocido'}, Hidalgo
+          </div>
         </div>
       `;
+
+
+
       
       layer.bindPopup(html);
 
@@ -318,6 +367,7 @@ let capa_actual = gjson2025;
       return new L.Control.Watermark(opts);
   }
   L.control.watermark({ position: 'bottomleft' }).addTo(map);
+  
     
     
     function actualizarGraficasBasadoEnFeaturesVisibles(){
@@ -333,6 +383,7 @@ let capa_actual = gjson2025;
       const frecuencias_causaA = Array(5).fill(0);
       const frecuencias_tipoAcc= Array(13).fill(0);
       const vehiculos_conteo = Array(7).fill(0);
+      const frecuencias_placas = Array(7).fill(0);
       //AUTOMOVIL BICICLETA CAMION CAMIONETA CAMPASAJ FERROCARRI MICROBUS MOTOCICLET OMNIBUS PASCAMION TRACTOR
     //   [1] "Caída de pasajero"                     "Colisión con animal"                   "Colisión con ciclista"                
     //   [4] "Colisión con ferrocarril"              "Colisión con motocicleta"              "Colisión con objeto fijo"             
@@ -377,6 +428,7 @@ let capa_actual = gjson2025;
               const total_heridos = feature.properties.TOT_HER;
               const conductor_muertos = feature.properties.CONDMUE;
               const conductor_heridos = feature.properties.CONDHER;
+              const placa = feature.properties.PLACAS;
 
               //const saldo_vehiculos_o_personas
               
@@ -551,6 +603,35 @@ let capa_actual = gjson2025;
                   break;
                 }
                 }
+                if(placa){
+                  switch (placa) {
+                    case "A51392K":
+                    frecuencias_placas[0]++;
+                    break;
+                    case "A52579K":
+                    frecuencias_placas[1]++;
+                    break;
+                    case "A55434K":
+                    frecuencias_placas[2]++;  
+                    break;
+                    case "A55543K":
+                    frecuencias_placas[3]++;
+                    break;
+                    case "A56032K":
+                    frecuencias_placas[4]++;
+                    break;
+                    case "A56215K":
+                    frecuencias_placas[5]++;
+                    break;
+                    case "A56263K":
+                    frecuencias_placas[6]++;
+                    break;
+                }
+                }
+
+
+
+
                 totMuertos       += total_muertos;
                 totHeridos       += total_heridos;
                 totCondMuertos   += conductor_muertos;
@@ -659,6 +740,17 @@ let capa_actual = gjson2025;
       chart_afectados.data.datasets[1].data = [totCondHeridos, totCondMuertos];
       chart_afectados.options.plugins.title.text = `Número de personas involucradas (${anio})`;
       chart_afectados.update();
+
+      // Placas
+      chart_placas.data.datasets[0].data = frecuencias_placas;
+      chart_placas.options.plugins.title.text = `Placas mas accidentadas (${anio})`;
+      chart_placas.update();
+
+      console.log(chart_placas.data.datasets[0].data);
+
+
+
+
     }
 
 
@@ -670,9 +762,6 @@ let capa_actual = gjson2025;
       map.fitBounds(bounds);
       capa_actual = gjson2021;
       actualizarGraficasBasadoEnFeaturesVisibles();      
-
-
-      
     })
 
 

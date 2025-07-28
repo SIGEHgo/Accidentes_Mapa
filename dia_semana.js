@@ -15,7 +15,6 @@ const plugin_actualizar_eleccion_cruzada_diasemana = [
           const datasetIndex = points[0].datasetIndex; // Índice del dataset
           const index = points[0].index; // Índice de la barra clickeada
           let label = chart.data.labels[index]; // Obtener etiqueta de la barra
-          //console.log(label.slice(0, -3));
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
@@ -88,7 +87,6 @@ promesa_primera_diasemana = new Promise((resolve, reject) => {
       }
       }
   });
-  console.log(hist_diasemana)
   resolve();
 });
 promesa_primera_diasemana.then(() => {
