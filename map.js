@@ -486,6 +486,10 @@ L.control.watermark = function (opts) {
 };
 L.control.watermark({ position: "bottomleft" }).addTo(map);
 
+
+
+
+
 function actualizarGraficasBasadoEnFeaturesVisibles() {
   const bounds = map.getBounds();
   const sw = bounds.getSouthWest();
@@ -861,6 +865,37 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   chart_placas.update();
 
   console.log(chart_placas.data.datasets[0].data);
+
+  // Operador
+  const frecuencias_operador = {};
+
+  capa_actual.features.forEach((feature) => {
+    const coords = feature.geometry.coordinates;
+    const latlng = L.latLng(coords[1], coords[0]);
+
+    if (map.getBounds().contains(latlng)) {
+      const id_oper = feature.properties.ID_OPER;
+      if (id_oper) {
+        frecuencias_operador[id_oper] = (frecuencias_operador[id_oper] || 0) + 1;
+      }
+    }
+  });
+
+  // Ordenar por frecuencia descendente y tomar top 5
+  const operadores_ordenados = Object.entries(frecuencias_operador)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const labels_operador = operadores_ordenados.map(item => item[0]);
+  const data_operador = operadores_ordenados.map(item => item[1]);
+
+  // Actualizar gráfico chart_operador
+  chart_operador.data.labels = labels_operador;
+  chart_operador.data.datasets[0].data = data_operador;
+  chart_operador.options.plugins.title.text = `Operador (${anio})`;
+  chart_operador.update();
+
+
 }
 
 document
