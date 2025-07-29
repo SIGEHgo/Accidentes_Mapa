@@ -149,8 +149,12 @@ datos = datos |>
 mun = sf::read_sf("../../Importantes_documentos_usar/Municipios/municipiosjair.shp")
 
 datos = datos |> 
+  dplyr::mutate(PLACID = paste0(ID_OPER, "-", PLACAS)) |> 
   dplyr::arrange(ANIO,MES,DIA,HORA,MINUTOS) |> 
   sf::st_as_sf(coords = c("LONGITUD", "LATITUD"), crs = sf::st_crs(x = mun))
+  
+sf::st_write(datos, "Datos/Filtrados/2025_C5/2025.geojson", driver = "GeoJSON", delete_dsn = T)
+  
 
 
 placas = datos |> 
@@ -160,8 +164,6 @@ placas = datos |>
   dplyr::ungroup() |> 
   dplyr::filter(conteo > 1) |> 
   dplyr::arrange(conteo, PLACAS)
-
-sf::st_write(datos, "Datos/Filtrados/2025_C5/2025.geojson", driver = "GeoJSON", rewrite=TRUE)
 
 
 ### Verificar si alguno esta fuera

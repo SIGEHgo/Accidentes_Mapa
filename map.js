@@ -37,14 +37,19 @@ var invisible2025 = L.geoJSON(gjson2025, {
 var searchControl = new L.Control.Search({
   layer: invisible2025,
   propertyName: "PLACID",
+  textSearch: true,
+  initial: false,
   marker: false,
   moveToLocation: function (latlng, title, map) {
-    // Buscar sobre todos lo que coincidan con la placa
+    let caja_coordenadas = [];
+
     invisible2025.eachLayer(function (layer) {
       const props = layer.feature?.properties;
       if (props && props.PLACID === title) {
-        const coords = layer.getLatLng();
-        const circle = L.circle(coords, {
+        const coordenadas = layer.getLatLng();
+        caja_coordenadas.push(coordenadas);
+
+        const circle = L.circle(coordenadas, {
           radius: 300,
           weight: 5,
           color: "#e03",
@@ -55,9 +60,15 @@ var searchControl = new L.Control.Search({
         animateCircle(circle);
       }
     });
+
+    if (caja_coordenadas.length > 0) {
+      const caja = L.latLngBounds(caja_coordenadas);
+      map.fitBounds(caja, { padding: [50, 50] }); // Un padding para no andar al borde
+    }
   },
   textPlaceholder: "Buscar placa o ID Operador",
 });
+
 
 map.addControl(searchControl);
 
