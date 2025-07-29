@@ -153,6 +153,14 @@ datos = datos |>
   sf::st_as_sf(coords = c("LONGITUD", "LATITUD"), crs = sf::st_crs(x = mun))
 
 
+placas = datos |> 
+  sf::st_drop_geometry() |> 
+  dplyr::group_by(PLACAS) |> 
+  dplyr::summarise(conteo = dplyr::n()) |> 
+  dplyr::ungroup() |> 
+  dplyr::filter(conteo > 1) |> 
+  dplyr::arrange(conteo, PLACAS)
+
 sf::st_write(datos, "Datos/Filtrados/2025_C5/2025.geojson", driver = "GeoJSON", rewrite=TRUE)
 
 
