@@ -109,7 +109,10 @@ datos = datos |>
                 RUTA = gsub(pattern = "\n", replacement = "", x = RUTA),
                 RUTA = gsub(pattern = "/ ", replacement = "/", x = RUTA),
                 RUTA = gsub(pattern = " /", replacement = "/", x = RUTA),
-                RUTA = stringr::str_squish(RUTA))
+                RUTA = stringr::str_squish(RUTA),
+                
+                `TIPO DE TRANSPORTE` = gsub(pattern = "/", replacement = " / ", x = `TIPO DE TRANSPORTE`)
+                )
 
 # Ya homologados corregimos detalles
 

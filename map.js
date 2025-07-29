@@ -267,7 +267,9 @@ onEachFeature_default = function (feature, layer) {
           </div>
 
           <div class="sub-header" style="background-color: #e60000; color: white; font-weight: bold; padding: 10px; margin-bottom: 10px;">
-            ${p.TIPACCID} - ${p.CLASE}
+            ${p.TIPACCID} - ${p.CLASE} <br>Tipo de transporte: ${
+    p["TIPO DE TRANSPORTE" ] || "No especificado"
+  }
           </div>
 
           <div class="informacion" style="display: flex; margin-top: 0px; height: 160px;">
@@ -281,20 +283,25 @@ onEachFeature_default = function (feature, layer) {
               }" height="100%">
             </div>
             <div class="derecha" style="width: 80%; text-align: left; padding-left: 10px;">
-              <div class="cause" style="font-weight: bold; color: #ff0000; font-size: 18px;">Posible causa:</div>
-              <div class="details" style="font-size: 17px; margin-bottom: 10px;">
-                <strong> ${responsable} </strong>
-              </div>
-              <div class="id_conductor" style="font-size: 16px; margin-bottom: 10px;"> ID Operador: <strong> ${
+              <div class = "causa" style="font-size: 14px; ">Posible causa: <strong> ${
+                responsable
+              } </strong> </div>
+              <div class="nombre_operador" style="font-size: 14px; ">Nombre del operador: <strong> ${
+                p.NOM_OPER || "No hay dato"
+              } </strong> </div>
+              <div class="id_conductor" style="font-size: 14px; "> ID Operador: <strong> ${
                 p.ID_OPER || "No hay dato"
               } </strong> </div>
-              <div class="placas" style="font-size: 16px; margin-bottom: 10px;">Placa: <strong> ${
+              <div class="placas" style="font-size: 14px; ">Placa: <strong> ${
                 p.PLACAS || "No hay dato"
               } </strong> </div>
-              <div class="ruta" style="font-size: 16px; margin-bottom: 10px;">Ruta: <strong> ${
+              <div class="ruta" style="font-size: 14px; ">Ruta: <strong> ${
                 p.RUTA || "No hay dato"
               } </strong> </div>
-              <div class="date-time" style="font-size: 16px; margin-bottom: 10px;">Fecha: <strong> ${fecha_actualizacion} </strong> </div>
+              <div class="nombre_concesionario" style="font-size: 14px; "> Nombre del concesionario: <strong> ${
+                p.NOM_CON || "No hay dato"
+              } </strong> </div>
+              <div class="date-time" style="font-size: 14px; ">Fecha: <strong> ${fecha_actualizacion} </strong> </div>
             </div>
           </div>
 
