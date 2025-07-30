@@ -16,6 +16,8 @@ const plugin_operador = [
           const label = chart.data.labels[index];
           console.log("Clic en la barra:", label);
 
+          navigator.clipboard.writeText(label);
+
           // Dentro de la vista filtro
           const bounds = map.getBounds();
           const array_ofMarkers = capa_actual.features.filter((feature) => {
