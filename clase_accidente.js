@@ -19,7 +19,7 @@ const plugin_actualizar_eleccion_cruzada_clase = [
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
-              (feature.properties.CLASE === (label)) &
+              (feature.properties.CLASE === label) &
               bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
@@ -46,9 +46,28 @@ const plugin_actualizar_eleccion_cruzada_clase = [
           });
 
           function animateCircle(circle) {
-            let radius = 300;
+            const zoom = map.getZoom();
+            console.log("Zoom actual:", zoom);
+
+            let radius;
+            let disminuye;
+
+            if (zoom < 10) {
+              radius = 3500;
+              disminuye = 350;
+            } else if (zoom < 12) {
+              radius = 1500;
+              disminuye = 150;
+            } else if (zoom < 14) {
+              radius = 500;
+              disminuye = 50;
+            } else {
+              radius = 100;
+              disminuye = 10;
+            }
+
             const interval = setInterval(() => {
-              radius -= 20;
+              radius -= disminuye;
               if (radius < 5) {
                 map.removeLayer(circle);
                 clearInterval(interval);
@@ -65,55 +84,54 @@ const plugin_actualizar_eleccion_cruzada_clase = [
 promesa_primera_hora = new Promise((resolve, reject) => {
   gjson2025.features.forEach((element) => {
     if (element.properties.CLASE != null) {
-      if(element.properties.CLASE==="Sólo daños"){
-        hist_clase_accidente[0]+=1
+      if (element.properties.CLASE === "Sólo daños") {
+        hist_clase_accidente[0] += 1;
       }
-      if(element.properties.CLASE==="No fatal"){
-        hist_clase_accidente[1]+=1
+      if (element.properties.CLASE === "No fatal") {
+        hist_clase_accidente[1] += 1;
       }
-      if(element.properties.CLASE==="Fatal"){
-        hist_clase_accidente[2]+=1
+      if (element.properties.CLASE === "Fatal") {
+        hist_clase_accidente[2] += 1;
       }
     }
     resolve();
   });
 });
 promesa_primera_hora.then(() => {
- const ctx = document.getElementById("clase_accidente").getContext("2d");
-    chart_clase_accidente = new Chart(ctx, {
-      type: "pie",
-      data: {
-        labels: ["Sólo daños","No fatal","Fatal"],
-        datasets: [
-          {
-            label: "Frecuencia",
-            data: hist_clase_accidente,
-            backgroundColor: [
-              "rgba(110, 172, 218,0.6)",
-              "rgba(226, 226, 182,0.6)",
-              "rgba(2, 21, 38,0.6)",
-            ],
-            borderColor: "#ffffff",
-            borderWidth: 3,
-            hoverOffset: 7,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false, // Disable maintaining aspect ratio
-        plugins: {
-          title: {
-            display: true,
-            text: "Distribución de los accidentes por magnitud (2025)",
-            padding: {
-              top: 0,
-              bottom: 0,
-            },
+  const ctx = document.getElementById("clase_accidente").getContext("2d");
+  chart_clase_accidente = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["Sólo daños", "No fatal", "Fatal"],
+      datasets: [
+        {
+          label: "Frecuencia",
+          data: hist_clase_accidente,
+          backgroundColor: [
+            "rgba(110, 172, 218,0.6)",
+            "rgba(226, 226, 182,0.6)",
+            "rgba(2, 21, 38,0.6)",
+          ],
+          borderColor: "#ffffff",
+          borderWidth: 3,
+          hoverOffset: 7,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // Disable maintaining aspect ratio
+      plugins: {
+        title: {
+          display: true,
+          text: "Distribución de los accidentes por magnitud (2025)",
+          padding: {
+            top: 0,
+            bottom: 0,
           },
         },
       },
-      plugins: plugin_actualizar_eleccion_cruzada_clase,
-    });
-  }
-);
+    },
+    plugins: plugin_actualizar_eleccion_cruzada_clase,
+  });
+});

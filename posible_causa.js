@@ -46,9 +46,28 @@ const plugin_actualizar_eleccion_cruzada_causa = [
           });
 
           function animateCircle(circle) {
-            let radius = 300;
+            const zoom = map.getZoom();
+            console.log("Zoom actual:", zoom);
+
+            let radius;
+            let disminuye;
+
+            if (zoom < 10) {
+              radius = 3500;
+              disminuye = 350;
+            } else if (zoom < 12) {
+              radius = 1500;
+              disminuye = 150;
+            } else if (zoom < 14) {
+              radius = 500;
+              disminuye = 50;
+            } else {
+              radius = 100;
+              disminuye = 10;
+            }
+
             const interval = setInterval(() => {
-              radius -= 20;
+              radius -= disminuye;
               if (radius < 5) {
                 map.removeLayer(circle);
                 clearInterval(interval);

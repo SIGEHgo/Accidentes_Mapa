@@ -18,7 +18,7 @@ const plugin_actualizar_eleccion_cruzada_diasemana = [
           const bounds = map.getBounds();
           array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
-              (feature.properties.DIASEMANA === (label)) &
+              (feature.properties.DIASEMANA === label) &
               bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
@@ -45,9 +45,28 @@ const plugin_actualizar_eleccion_cruzada_diasemana = [
           });
 
           function animateCircle(circle) {
-            let radius = 300;
+            const zoom = map.getZoom();
+            console.log("Zoom actual:", zoom);
+
+            let radius;
+            let disminuye;
+
+            if (zoom < 10) {
+              radius = 3500;
+              disminuye = 350;
+            } else if (zoom < 12) {
+              radius = 1500;
+              disminuye = 150;
+            } else if (zoom < 14) {
+              radius = 500;
+              disminuye = 50;
+            } else {
+              radius = 100;
+              disminuye = 10;
+            }
+
             const interval = setInterval(() => {
-              radius -= 20;
+              radius -= disminuye;
               if (radius < 5) {
                 map.removeLayer(circle);
                 clearInterval(interval);
@@ -64,77 +83,84 @@ const plugin_actualizar_eleccion_cruzada_diasemana = [
 promesa_primera_diasemana = new Promise((resolve, reject) => {
   gjson2025.features.forEach((element) => {
     if (element.properties.DIASEMANA != null) {
-      if (element.properties.DIASEMANA === "Lunes"){
-        hist_diasemana[0]+=1
+      if (element.properties.DIASEMANA === "Lunes") {
+        hist_diasemana[0] += 1;
       }
-      if (element.properties.DIASEMANA === "Martes"){
-        hist_diasemana[1]+=1
+      if (element.properties.DIASEMANA === "Martes") {
+        hist_diasemana[1] += 1;
       }
-      if (element.properties.DIASEMANA === "Miércoles"){
-        hist_diasemana[2]+=1
+      if (element.properties.DIASEMANA === "Miércoles") {
+        hist_diasemana[2] += 1;
       }
-      if (element.properties.DIASEMANA === "Jueves"){
-        hist_diasemana[3]+=1
+      if (element.properties.DIASEMANA === "Jueves") {
+        hist_diasemana[3] += 1;
       }
-      if (element.properties.DIASEMANA === "Viernes"){
-        hist_diasemana[4]+=1
+      if (element.properties.DIASEMANA === "Viernes") {
+        hist_diasemana[4] += 1;
       }
-      if (element.properties.DIASEMANA === "Sábado"){
-        hist_diasemana[5]+=1
+      if (element.properties.DIASEMANA === "Sábado") {
+        hist_diasemana[5] += 1;
       }
-      if (element.properties.DIASEMANA === "Domingo"){
-        hist_diasemana[6]+=1
+      if (element.properties.DIASEMANA === "Domingo") {
+        hist_diasemana[6] += 1;
       }
-      }
+    }
   });
   resolve();
 });
 promesa_primera_diasemana.then(() => {
- const ctx = document.getElementById("dia_semana").getContext("2d");
-    chart_dia_semana = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
-        datasets: [
-          {
-            label: "Cantidad de accidentes",
-            data: hist_diasemana,
-            backgroundColor: [
-              `rgba(100, 120, 150, 0.4)`, // Gris azulado
-            ],
-            borderColor: "rgb(75, 192, 192)",
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          title: {
-            display: true,
-            text: "Incidencia de accidentes por día de la semana (2025)",
-          },
-          legend: {
-            display: false,
-          },
+  const ctx = document.getElementById("dia_semana").getContext("2d");
+  chart_dia_semana = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: [
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+        "Domingo",
+      ],
+      datasets: [
+        {
+          label: "Cantidad de accidentes",
+          data: hist_diasemana,
+          backgroundColor: [
+            `rgba(100, 120, 150, 0.4)`, // Gris azulado
+          ],
+          borderColor: "rgb(75, 192, 192)",
+          borderWidth: 1,
         },
-        scales: {
-          y: {
-            ticks: {
-              stepSize: 1, // Ensure only integer values
-              callback: function (value) {
-                return Number.isInteger(value) ? value : null;
-              },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: "Incidencia de accidentes por día de la semana (2025)",
+        },
+        legend: {
+          display: false,
+        },
+      },
+      scales: {
+        y: {
+          ticks: {
+            stepSize: 1, // Ensure only integer values
+            callback: function (value) {
+              return Number.isInteger(value) ? value : null;
             },
           },
         },
-        animation: {
-          duration: 1500, // 1 segundo de animación
-          easing: "easeOutCubic", // animación más fluida
-        },
       },
-      plugins: plugin_actualizar_eleccion_cruzada_diasemana,
-    });
-  }
-);
+      animation: {
+        duration: 1500, // 1 segundo de animación
+        easing: "easeOutCubic", // animación más fluida
+      },
+    },
+    plugins: plugin_actualizar_eleccion_cruzada_diasemana,
+  });
+});

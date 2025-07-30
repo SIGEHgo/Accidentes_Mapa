@@ -1,9 +1,9 @@
-const plugin_placas = [
+const plugin_ruta = [
   {
     id: "customEventListener",
     afterEvent: (chart, evt) => {
       if (evt.event.type === "click") {
-        // 1) Barras existentes
+        // Barras existentes
         const points = chart.getElementsAtEventForMode(
           evt.event,
           "x",
@@ -20,7 +20,7 @@ const plugin_placas = [
           const bounds = map.getBounds();
           const array_ofMarkers = capa_actual.features.filter((feature) => {
             return (
-              feature.properties.PLACAS === label &&
+              feature.properties.RUTA === label &&
               bounds.contains(
                 L.latLng(
                   feature.geometry.coordinates[1],
@@ -80,8 +80,8 @@ const plugin_placas = [
   },
 ];
 
-const ctx = document.getElementById("chart_placas").getContext("2d");
-chart_placas = new Chart(ctx, {
+const ctx13 = document.getElementById("chart_ruta").getContext("2d");
+chart_ruta = new Chart(ctx13, {
   type: "bar",
   data: {
     labels: [], // luego los llenas dinámicamente
@@ -94,10 +94,7 @@ chart_placas = new Chart(ctx, {
           "rgba(0, 128, 0, 0.2)",
           "rgba(255, 95, 31, 0.2)",
           "rgba(0, 0, 255, 0.2)",
-          "rgba(255, 255, 0, 0.2)",
-          "rgba(128, 0, 128, 0.2)",
-          "rgba(255, 165, 0, 0.2)",
-          "rgba(75, 0, 130, 0.2)",
+          "rgba(255, 255, 0, 0.2)"
         ],
         borderColor: "rgba(255, 255, 255, 1)",
         borderWidth: 3,
@@ -112,7 +109,7 @@ chart_placas = new Chart(ctx, {
       legend: { display: false },
       title: {
         display: true,
-        text: "Placas más frecuentes (2025)",
+        text: "Rutas más involucradas (2025)",
         padding: { top: 0, bottom: 0 },
       },
     },
@@ -125,5 +122,5 @@ chart_placas = new Chart(ctx, {
       },
     },
   },
-  plugins: plugin_placas,
+  plugins: plugin_ruta,
 });

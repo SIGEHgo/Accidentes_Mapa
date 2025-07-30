@@ -3,7 +3,7 @@ const plugin_tipo_transporte = [
     id: "customEventListener",
     afterEvent: (chart, evt) => {
       if (evt.event.type === "click") {
-        // 1) Barras existentes
+        // Barras existentes
         const points = chart.getElementsAtEventForMode(
           evt.event,
           "x",
@@ -52,13 +52,13 @@ const plugin_tipo_transporte = [
 
             if (zoom < 10) {
               radius = 3500;
-              disminuye = 200;
+              disminuye = 350;
             } else if (zoom < 12) {
-              radius = 1000;
-              disminuye = 100;
+              radius = 1500;
+              disminuye = 150;
             } else if (zoom < 14) {
-              radius = 200;
-              disminuye = 20;
+              radius = 500;
+              disminuye = 50;
             } else {
               radius = 100;
               disminuye = 10;

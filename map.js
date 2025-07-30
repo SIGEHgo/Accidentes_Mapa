@@ -916,6 +916,32 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   chart_tipo_transporte.options.plugins.title.text = `Tipos de transporte involucrados (${anio})`;
   chart_tipo_transporte.update();
 
+
+  // Ruta
+  const frecuencias_ruta = {};
+  capa_actual.features.forEach((feature) => {
+    const coords = feature.geometry.coordinates;
+    const latlng = L.latLng(coords[1], coords[0]);
+
+    if (map.getBounds().contains(latlng)) {
+      const ruta = feature.properties.RUTA;
+      if (ruta) {
+        frecuencias_ruta[ruta] = (frecuencias_ruta[ruta] || 0) + 1;
+      }
+    }
+  });
+  // Ordenar por frecuencia descendente y tomar top 5
+  const rutas_ordenadas = Object.entries(frecuencias_ruta)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  const labels_ruta = rutas_ordenadas.map(item => item[0]);
+  const data_ruta = rutas_ordenadas.map(item => item[1]);
+  // Actualizar gráfico chart_ruta
+  chart_ruta.data.labels = labels_ruta;
+  chart_ruta.data.datasets[0].data = data_ruta;
+  chart_ruta.options.plugins.title.text = `Rutas más frecuentes (${anio})`;
+  chart_ruta.update();
+
 }
 
 document
@@ -971,3 +997,4 @@ document
 // Actualizar cuando el zoom termine.
 map.on("zoomend", quitar_anadir_circulos);
 map.on("zoomend dragend", actualizarGraficasBasadoEnFeaturesVisibles);
+actualizarGraficasBasadoEnFeaturesVisibles();
