@@ -856,7 +856,7 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   // Actualizar gráfico chart_placas
   chart_placas.data.labels = labels_placas;
   chart_placas.data.datasets[0].data = data_placas;
-  chart_placas.options.plugins.title.text = `Placas más frecuentes (${anio})`;
+  chart_placas.options.plugins.title.text = `Placas involucradas (${anio})`;
   chart_placas.update();
 
 
@@ -886,7 +886,7 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   // Actualizar gráfico chart_operador
   chart_operador.data.labels = labels_operador;
   chart_operador.data.datasets[0].data = data_operador;
-  chart_operador.options.plugins.title.text = `Operadores más frecuentes  (${anio})`;
+  chart_operador.options.plugins.title.text = `Incidencia de accidentes por operador  (${anio})`;
   chart_operador.update();
 
 
@@ -913,7 +913,7 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   // Actualizar gráfico chart_tipo_transporte
   chart_tipo_transporte.data.labels = labels_transporte
   chart_tipo_transporte.data.datasets[0].data = data_transporte;
-  chart_tipo_transporte.options.plugins.title.text = `Tipos de transporte involucrados (${anio})`;
+  chart_tipo_transporte.options.plugins.title.text = `Frecuencia de accidentes según tipo de transporte (${anio})`;
   chart_tipo_transporte.update();
 
 
@@ -939,7 +939,7 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   // Actualizar gráfico chart_ruta
   chart_ruta.data.labels = labels_ruta;
   chart_ruta.data.datasets[0].data = data_ruta;
-  chart_ruta.options.plugins.title.text = `Rutas más frecuentes (${anio})`;
+  chart_ruta.options.plugins.title.text = `Concentración de accidentes en rutas viales (${anio})`;
   chart_ruta.update();
 
 }

@@ -90,11 +90,11 @@ chart_ruta = new Chart(ctx13, {
         label: "Frecuencia",
         data: [], // inicializado como array
         backgroundColor: [
-          "rgba(255, 0, 0, 0.2)",
           "rgba(0, 128, 0, 0.2)",
-          "rgba(255, 95, 31, 0.2)",
           "rgba(0, 0, 255, 0.2)",
-          "rgba(255, 255, 0, 0.2)"
+          "rgba(255, 95, 31, 0.2)",
+          "rgba(255, 0, 0, 0.2)",
+          "rgba(0, 162, 255, 0.2)"
         ],
         borderColor: "rgba(255, 255, 255, 1)",
         borderWidth: 3,
@@ -109,7 +109,7 @@ chart_ruta = new Chart(ctx13, {
       legend: { display: false },
       title: {
         display: true,
-        text: "Rutas más involucradas (2025)",
+        text: "Concentración de accidentes en rutas viales (2025)",
         padding: { top: 0, bottom: 0 },
       },
     },

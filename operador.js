@@ -90,13 +90,7 @@ chart_operador = new Chart(ctx11, {
         label: "Frecuencia",
         data: [], // inicializado como array
         backgroundColor: [
-          "rgba(255, 0, 0, 0.2)",
-          "rgba(0, 128, 0, 0.2)",
-          "rgba(255, 95, 31, 0.2)",
-          "rgba(0, 0, 255, 0.2)",
-          "rgba(255, 255, 0, 0.2)",
-          "rgba(128, 0, 128, 0.2)",
-          "rgba(255, 165, 0, 0.2)",
+          "rgba(0, 68, 255, 0.3)",
         ],
         borderColor: "rgba(255, 255, 255, 1)",
         borderWidth: 3,
@@ -111,7 +105,7 @@ chart_operador = new Chart(ctx11, {
       legend: { display: false },
       title: {
         display: true,
-        text: "Operadores más frecuentes (2025)",
+        text: "Incidencia de accidentes por operador (2025)",
         padding: { top: 0, bottom: 0 },
       },
     },

@@ -111,6 +111,8 @@ datos = datos |>
                 RUTA = gsub(pattern = " /", replacement = "/", x = RUTA),
                 RUTA = stringr::str_squish(RUTA),
                 
+                `TIPO DE TRANSPORTE` = gsub(pattern = "Transporte", replacement = "", x = `TIPO DE TRANSPORTE`)
+                `TIPO DE TRANSPORTE` = stringr::str_squish(`TIPO DE TRANSPORTE`),
                 `TIPO DE TRANSPORTE` = gsub(pattern = "/", replacement = " / ", x = `TIPO DE TRANSPORTE`)
                 )
 
@@ -159,6 +161,18 @@ datos = datos |>
 sf::st_write(datos, "Datos/Filtrados/2025_C5/2025.geojson", driver = "GeoJSON", delete_dsn = T)
   
 
+### Verificar si alguno esta fuera
+dentro = sf::st_intersects(x = mun, y = datos)
+dentro = dentro |>  unlist()
+
+afuera = datos[-dentro,]
+datos_dentro = datos[-which(datos$NUM %in% afuera$NUM),]
+
+sf::st_write(datos_dentro, "Datos/Filtrados/2025_C5/2025_dentro", driver = "GeoJSON", rewrite=TRUE)
+
+
+
+
 
 placas = datos |> 
   sf::st_drop_geometry() |> 
@@ -168,12 +182,12 @@ placas = datos |>
   dplyr::filter(conteo > 1) |> 
   dplyr::arrange(conteo, PLACAS)
 
+ruta = datos |> 
+  sf::st_drop_geometry() |> 
+  dplyr::group_by(RUTA) |> 
+  dplyr::summarise(conteo = dplyr::n()) |> 
+  dplyr::ungroup() |> 
+  dplyr::filter(conteo > 2) |> 
+  dplyr::arrange(conteo, RUTA)
 
-### Verificar si alguno esta fuera
-dentro = sf::st_intersects(x = mun, y = datos)
-dentro = dentro |>  unlist()
 
-afuera = datos[-dentro,]
-datos_dentro = datos[-which(datos$NUM %in% afuera$NUM),]
-
-sf::st_write(datos_dentro, "Datos/Filtrados/2025_C5/2025_dentro", driver = "GeoJSON", rewrite=TRUE)
