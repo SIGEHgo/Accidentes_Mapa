@@ -15,8 +15,27 @@ const plugin_operador = [
           const index = points[0].index;
           const label = chart.data.labels[index];
           console.log("Clic en la barra:", label);
+          
+          // Copiar texto al portapapeles
+          function copiarTexto(texto) {
+            navigator.clipboard.writeText(texto)
+              .then(() => {
+                mostrarportapapeles();
+                console.log("Texto copiado al portapapeles:", texto);
+              })
+          }; 
+          
+          function mostrarportapapeles() {
+            const portapapeles = document.getElementById("portapapeles");
+            portapapeles.className = "show";
+            setTimeout(() => {
+              portapapeles.className = portapapeles.className.replace("show", "");
+              console.log("Anda en funcionamiento mostrarportapeles");
+            }, 3000);
+          }
 
-          navigator.clipboard.writeText(label);
+          copiarTexto(label);
+            
 
           // Dentro de la vista filtro
           const bounds = map.getBounds();

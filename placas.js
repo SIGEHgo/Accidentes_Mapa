@@ -16,6 +16,28 @@ const plugin_placas = [
           const label = chart.data.labels[index];
           console.log("Clic en la barra:", label);
 
+          // Copiar texto al portapapeles
+          function copiarTexto(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+              mostrarportapapeles();
+              console.log("Texto copiado al portapapeles:", texto);
+            });
+          }
+
+          function mostrarportapapeles() {
+            const portapapeles = document.getElementById("portapapeles");
+            portapapeles.className = "show";
+            setTimeout(() => {
+              portapapeles.className = portapapeles.className.replace(
+                "show",
+                ""
+              );
+              console.log("Anda en funcionamiento mostrarportapeles");
+            }, 3000);
+          }
+
+          copiarTexto(label);
+
           // Dentro de la vista filtro
           const bounds = map.getBounds();
           const array_ofMarkers = capa_actual.features.filter((feature) => {
@@ -89,9 +111,7 @@ chart_placas = new Chart(ctx, {
       {
         label: "Frecuencia",
         data: [], // inicializado como array
-        backgroundColor: [
-          "rgba(160, 159, 159, 0.3)",
-        ],
+        backgroundColor: ["rgba(160, 159, 159, 0.3)"],
         borderColor: "rgba(253, 255, 255, 1)",
         borderWidth: 1,
         hoverOffset: 7,

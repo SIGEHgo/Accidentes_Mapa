@@ -198,6 +198,28 @@
         .legend_seguridad{
             max-width: 20vw;
         }
+        #portapapeles {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s ease, bottom 0.5s ease;
+        }
+        #portapapeles.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
     </style>
 </head>
 <body>
@@ -232,6 +254,9 @@
       </div>
     </div>
   </div>
+
+  <div id="portapapeles"> Copiado en el portapapeles</div>
+
     <div id="contenedor_global">
         <div id="primera_mitad">
             <div id="map" ></div>
