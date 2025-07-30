@@ -60,8 +60,8 @@ const plugin_operador = [{
   }
 }];
 
-const ctx = document.getElementById("operador").getContext("2d");
-chart_operador = new Chart(ctx, {
+const ctx11 = document.getElementById("operador").getContext("2d");
+chart_operador = new Chart(ctx11, {
   type: "bar",
   data: {
     labels: [],       // luego los llenas dinámicamente
@@ -75,6 +75,7 @@ chart_operador = new Chart(ctx, {
         "rgba(0, 0, 255, 0.2)",
         "rgba(255, 255, 0, 0.2)",
         "rgba(128, 0, 128, 0.2)",
+        "rgba(255, 165, 0, 0.2)",
       ],
       borderColor: "rgba(255, 255, 255, 1)",
       borderWidth: 3,
@@ -88,7 +89,7 @@ chart_operador = new Chart(ctx, {
       legend: { display: false },
       title: {
         display: true,
-        text: "Operador (2025)",
+        text: "Operadores más frecuentes (2025)",
         padding: { top: 0, bottom: 0 },
       },
     },

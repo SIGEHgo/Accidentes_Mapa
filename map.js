@@ -503,7 +503,6 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   const frecuencias_causaA = Array(5).fill(0);
   const frecuencias_tipoAcc = Array(13).fill(0);
   const vehiculos_conteo = Array(7).fill(0);
-  const frecuencias_placas = Array(7).fill(0);
   //AUTOMOVIL BICICLETA CAMION CAMIONETA CAMPASAJ FERROCARRI MICROBUS MOTOCICLET OMNIBUS PASCAMION TRACTOR
   //   [1] "Caída de pasajero"                     "Colisión con animal"                   "Colisión con ciclista"
   //   [4] "Colisión con ferrocarril"              "Colisión con motocicleta"              "Colisión con objeto fijo"
@@ -553,7 +552,6 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
       const total_heridos = feature.properties.TOT_HER;
       const conductor_muertos = feature.properties.CONDMUE;
       const conductor_heridos = feature.properties.CONDHER;
-      const placa = feature.properties.PLACAS;
 
       //const saldo_vehiculos_o_personas
 
@@ -727,31 +725,6 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
             break;
         }
       }
-      if (placa) {
-        switch (placa) {
-          case "A51392K":
-            frecuencias_placas[0]++;
-            break;
-          case "A52579K":
-            frecuencias_placas[1]++;
-            break;
-          case "A55434K":
-            frecuencias_placas[2]++;
-            break;
-          case "A55543K":
-            frecuencias_placas[3]++;
-            break;
-          case "A56032K":
-            frecuencias_placas[4]++;
-            break;
-          case "A56215K":
-            frecuencias_placas[5]++;
-            break;
-          case "A56263K":
-            frecuencias_placas[6]++;
-            break;
-        }
-      }
 
       totMuertos += total_muertos;
       totHeridos += total_heridos;
@@ -860,11 +833,32 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   chart_afectados.update();
 
   // Placas
-  chart_placas.data.datasets[0].data = frecuencias_placas;
-  chart_placas.options.plugins.title.text = `Placas mas accidentadas (${anio})`;
+  const frecuencias_placas = {};
+  capa_actual.features.forEach((feature) => {
+    const coords = feature.geometry.coordinates;
+    const latlng = L.latLng(coords[1], coords[0]);
+
+    if (map.getBounds().contains(latlng)) {
+      const placa = feature.properties.PLACAS;
+      if (placa) {
+        frecuencias_placas[placa] = (frecuencias_placas[placa] || 0) + 1;
+      }
+    }
+  });
+
+  // Ordenar por frecuencia descendente y tomar top 5
+  const placas_ordenadas = Object.entries(frecuencias_placas)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+  const labels_placas = placas_ordenadas.map(item => item[0]);
+  const data_placas = placas_ordenadas.map(item => item[1]);
+
+  // Actualizar gráfico chart_placas
+  chart_placas.data.labels = labels_placas;
+  chart_placas.data.datasets[0].data = data_placas;
+  chart_placas.options.plugins.title.text = `Placas más frecuentes (${anio})`;
   chart_placas.update();
 
-  console.log(chart_placas.data.datasets[0].data);
 
   // Operador
   const frecuencias_operador = {};
@@ -892,9 +886,35 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   // Actualizar gráfico chart_operador
   chart_operador.data.labels = labels_operador;
   chart_operador.data.datasets[0].data = data_operador;
-  chart_operador.options.plugins.title.text = `Operador (${anio})`;
+  chart_operador.options.plugins.title.text = `Operadores más frecuentes  (${anio})`;
   chart_operador.update();
 
+
+  // Tipo de transporte
+  const frecuencias_tipo_transporte = {};
+  capa_actual.features.forEach((feature) => {
+    const coords = feature.geometry.coordinates;
+    const latlng = L.latLng(coords[1], coords[0]);
+
+    if (map.getBounds().contains(latlng)) {
+      const tipo_transporte = feature.properties["TIPO DE TRANSPORTE"];
+      if (tipo_transporte) {
+        frecuencias_tipo_transporte[tipo_transporte] = (frecuencias_tipo_transporte[tipo_transporte] || 0) + 1;
+      }
+    }
+  });
+  // Ordenar por frecuencia descendente y tomar top 5
+  const transporte_ordenados = Object.entries(frecuencias_tipo_transporte)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 7);
+
+  const labels_transporte = transporte_ordenados.map(item => item[0]);
+  const data_transporte = transporte_ordenados.map(item => item[1]);
+  // Actualizar gráfico chart_tipo_transporte
+  chart_tipo_transporte.data.labels = labels_transporte
+  chart_tipo_transporte.data.datasets[0].data = data_transporte;
+  chart_tipo_transporte.options.plugins.title.text = `Tipos de transporte involucrados (${anio})`;
+  chart_tipo_transporte.update();
 
 }
 
