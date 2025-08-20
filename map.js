@@ -272,7 +272,7 @@ onEachFeature_default = function (feature, layer) {
   }
           </div>
 
-          <div class="informacion" style="display: flex; margin-top: 0px; height: 160px;">
+         <div class="informacion" style="display: flex; margin-top: 0px; max-height: 190px; align-items: center;">
             <div class="izquierda" style="width: 20%; height: 100%;">
               <img src="${
                 p.SEXO === "Hombre"
@@ -280,7 +280,7 @@ onEachFeature_default = function (feature, layer) {
                   : p.SEXO === "Mujer"
                   ? "imagenes/Iconos/mujer.png"
                   : "imagenes/Iconos/desconocido.png"
-              }" height="100%">
+              }" style="height: 100%; max-height: 160px; width: auto; object-fit: contain;">
             </div>
             <div class="derecha" style="width: 80%; text-align: left; padding-left: 10px;">
               <div class = "causa" style="font-size: 14px; ">Posible causa: <strong> ${
@@ -513,18 +513,51 @@ function actualizarGraficasBasadoEnFeaturesVisibles() {
   let totHeridos = 0;
   let totCondMuertos = 0;
   let totCondHeridos = 0;
-  const Contenedor_vehiculo = document.getElementById(
-    "vehiculos_involucrados"
-  ).parentElement;
+
+  const Contenedor_vehiculo = document.getElementById("vehiculos_involucrados").parentElement;
+  const contenedor_tipo_transporte = document.getElementById("chart_tipo_transporte").parentElement;
+  const contenedor_operador = document.getElementById("operador").parentElement;
+  const contenedor_ruta = document.getElementById("chart_ruta").parentElement;
+  const contenedor_placas = document.getElementById("chart_placas").parentElement;
+
+
   if (anio === 2025) {
     Contenedor_vehiculo.style.display = "none";
+    contenedor_tipo_transporte.style.display = "block";
+    contenedor_operador.style.display = "block";
+    contenedor_ruta.style.display = "block";
+    contenedor_placas.style.display = "block";
   } else {
     if (window.screen.width < 768) {
       Contenedor_vehiculo.style.display = "block";
       Contenedor_vehiculo.style.width = "40vw";
+
+      contenedor_tipo_transporte.style.display = "none";
+      contenedor_tipo_transporte.style.width = "40vw";
+
+      contenedor_operador.style.display = "none";
+      contenedor_operador.style.width = "40vw";
+
+      contenedor_ruta.style.display = "none";
+      contenedor_ruta.style.width = "40vw";
+
+      contenedor_placas.style.display = "none";
+      contenedor_placas.style.width = "40vw";
     } else {
       Contenedor_vehiculo.style.display = "block";
       Contenedor_vehiculo.style.height = "33vh";
+
+      contenedor_tipo_transporte.style.display = "none";
+      contenedor_tipo_transporte.style.height = "33vh";
+
+      contenedor_operador.style.display = "none";
+      contenedor_operador.style.height = "33vh";
+
+      contenedor_ruta.style.display = "none";
+      contenedor_ruta.style.height = "33vh";
+
+      contenedor_placas.style.display = "none";
+      contenedor_placas.style.height = "33vh";
     }
   }
 
