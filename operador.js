@@ -15,16 +15,40 @@ const plugin_operador = [
           const index = points[0].index;
           const label = chart.data.labels[index];
           console.log("Clic en la barra:", label);
+
+          //////////////////////////////////
+          // Copiar texto al portapapeles //
+          //////////////////////////////////
           
-          // Copiar texto al portapapeles
+          // Primer if normal como lo habia hecho
           function copiarTexto(texto) {
-            navigator.clipboard.writeText(texto)
-              .then(() => {
+            if (navigator.clipboard && window.isSecureContext) {
+              // HTTPS o localhost
+              navigator.clipboard.writeText(texto)
+                .then(() => {
+                  mostrarportapapeles();
+                  console.log("Texto copiado (Forma inicial):", texto);
+                })
+                .catch(err => {
+                  console.error("Error con Forma inicial:", err);
+                });
+            } else {
+              // HTTP o navegadores antiguos 
+              const input = document.createElement("textarea");
+              input.value = texto;
+              document.body.appendChild(input);
+              input.select();
+              try {
+                document.execCommand("copy");
                 mostrarportapapeles();
-                console.log("Texto copiado al portapapeles:", texto);
-              })
-          }; 
-          
+                console.log("Texto copiado (Nueva forma):", texto);
+              } catch (err) {
+                console.error("Error con Nueva forma ahora si no se:", err);
+              }
+              document.body.removeChild(input);
+            }
+          }
+
           function mostrarportapapeles() {
             const portapapeles = document.getElementById("portapapeles");
             portapapeles.className = "show";
@@ -35,7 +59,7 @@ const plugin_operador = [
           }
 
           copiarTexto(label);
-            
+
 
           // Dentro de la vista filtro
           const bounds = map.getBounds();
